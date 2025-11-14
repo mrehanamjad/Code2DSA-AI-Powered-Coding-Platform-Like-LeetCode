@@ -1,7 +1,7 @@
 import mongoose, { Document, model, models, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 
-export interface UserI extends Document {
+export interface UserI {
   userName: string;
   name: string;
   email: string;
@@ -29,7 +29,7 @@ export interface UserI extends Document {
   updatedAt?: Date;
 }
 
-const UserSchema = new Schema<UserI>(
+const UserSchema = new Schema<UserI & Document>(
   {
     userName: {
       type: String,
