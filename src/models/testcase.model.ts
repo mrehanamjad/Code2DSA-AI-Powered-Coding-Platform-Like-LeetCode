@@ -4,7 +4,7 @@ interface TestCaseI {
   problemId: mongoose.Types.ObjectId;
   input: any[];
   expected: any;
-  isHiddend: boolean;
+  isHidden: boolean;
   _id: mongoose.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
@@ -25,7 +25,7 @@ const TestCaseSchema: Schema<TestCaseI> = new Schema(
       type: Schema.Types.Mixed,
       required: true,
     },
-    isHiddend: {
+    isHidden: {
       type: Boolean,
       default: false,
     },

@@ -1,5 +1,7 @@
-import mongoose, { Schema, Document,  models } from "mongoose";
+import mongoose, { Schema, Document, models, Model } from "mongoose";
+import aggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
+// --- Interfaces ---
 interface ExampleI {
   input: string;
   output: string;
@@ -22,7 +24,6 @@ interface StarterCodeI {
   kotlin: string;
 }
 
-
 interface FunctionI {
   name: string;
   params: string[];
@@ -43,6 +44,7 @@ export interface ProblemI extends Document {
   updatedAt?: Date;
 }
 
+// --- Schemas ---
 const ExampleSchema: Schema<ExampleI> = new Schema(
   {
     input: { type: String, required: true },
@@ -98,7 +100,13 @@ const ProblemSchema: Schema<ProblemI> = new Schema(
   { timestamps: true }
 );
 
-const Problem =
-  models.Problem || mongoose.model<ProblemI>("Problem", ProblemSchema);
+ProblemSchema.plugin(aggregatePaginate);
+
+// Define the AggregatePaginateModel type
+interface ProblemModel<T extends Document> extends Model<T> {
+    aggregatePaginate: any;
+}
+
+const Problem = (models.Problem || mongoose.model<ProblemI>("Problem", ProblemSchema)) as ProblemModel<ProblemI>;
 
 export default Problem;

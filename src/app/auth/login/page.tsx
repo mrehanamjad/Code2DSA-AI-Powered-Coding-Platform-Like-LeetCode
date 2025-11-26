@@ -51,12 +51,10 @@ const Login = () => {
 
   return (
     <div 
-    style={{ backgroundImage: 'url(./problemsPg.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}
-     className="min-h-screen bg- text-foreground font-mono transition-colors duration-300">
+     className="min-h-screen   text-foreground font-mono transition-colors duration-300">
 
       <div className="container mx-auto px-4 py-8 lg:py-12">
         <div className=" lg:gap-12 h-full pt-18 max-sm:pt-10">
-          {/* Left - Terminal Form */}
           <div className="order-2 lg:order-1 animate-fade-in">
             <div className="max-w-md mx-auto">
               {/* Header */}
