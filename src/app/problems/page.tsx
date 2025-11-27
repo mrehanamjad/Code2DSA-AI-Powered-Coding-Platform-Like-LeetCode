@@ -1,93 +1,69 @@
-"use client";
-import { useState } from "react";
-import { Filter, LayoutGrid, List, Search } from "lucide-react";
-import Header from "@/components/Header";
+import { Suspense } from "react";
 import FilterPanel from "@/components/FilterPanel";
-import ProblemTable, { Problem } from "@/components/ProblemTable";
-import { Button } from "@/components/ui/button";
+import ProblemTable from "@/components/ProblemTable";
+import SearchInput from "@/components/SearchInput";
+import FilterToggleWrapper from "@/components/FilterToggleWrapper"; // New small wrapper
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { ProblemI } from "@/models/problem.model";
+import { SortSelect } from "@/components/SortSelect";
 
-// Mock data
-const mockProblems: Problem[] = [
-  {
-    id: 1,
-    title: "Two Sum",
-    difficulty: "Easy",
-    acceptance: 49.2,
-    tags: ["Array", "Hash Table"],
-    status: "solved",
-  },
-  {
-    id: 2,
-    title: "Add Two Numbers",
-    difficulty: "Medium",
-    acceptance: 41.8,
-    tags: ["Linked List", "Math"],
-    status: "attempted",
-  },
-  {
-    id: 3,
-    title: "Longest Substring Without Repeating Characters",
-    difficulty: "Medium",
-    acceptance: 35.4,
-    tags: ["String", "Sliding Window"],
-    status: "unsolved",
-  },
-  {
-    id: 4,
-    title: "Median of Two Sorted Arrays",
-    difficulty: "Hard",
-    acceptance: 37.1,
-    tags: ["Array", "Binary Search"],
-    status: "unsolved",
-  },
-  {
-    id: 5,
-    title: "Longest Palindromic Substring",
-    difficulty: "Medium",
-    acceptance: 33.5,
-    tags: ["String", "Dynamic Programming"],
-    status: "solved",
-  },
-  {
-    id: 6,
-    title: "Reverse Integer",
-    difficulty: "Easy",
-    acceptance: 28.1,
-    tags: ["Math"],
-    status: "solved",
-  },
-  {
-    id: 7,
-    title: "String to Integer (atoi)",
-    difficulty: "Medium",
-    acceptance: 16.9,
-    tags: ["String"],
-    status: "attempted",
-  },
-  {
-    id: 8,
-    title: "Container With Most Water",
-    difficulty: "Medium",
-    acceptance: 54.8,
-    tags: ["Array", "Two Pointers"],
-    status: "unsolved",
-  },
-];
+// Force dynamic rendering if your API is not static, 
+// though searchParams usually forces dynamic anyway in Next 15.
+export const dynamic = 'force-dynamic';
 
-const Problems = () => {
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+export interface ProblemResponse {
+  problems: ProblemI[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+async function getProblems(searchParams: { [key: string]: string | string[] | undefined }) {
+  // Convert object params to URLSearchParams string
+  const query = new URLSearchParams();
+  
+  Object.entries(searchParams).forEach(([key, value]) => {
+    if (value) query.append(key, value as string);
+  });
+
+  try {
+    const res = await fetch(`http://localhost:3000/api/problems?${query.toString()}`, {
+      cache: "no-store", // Ensure fresh data on every request
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch problems");
+
+    return res.json() as Promise<ProblemResponse>;
+  } catch (error) {
+    console.error(error);
+    return { problems: [], total: 0, page: 1, totalPages: 1 };
+  }
+}
+
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function ProblemsPage({ searchParams }: PageProps) {
+  // 1. Await params in Next.js 15
+  const params = await searchParams;
+  
+  // 2. Fetch data server-side
+  const data = await getProblems(params);
+
+  if (!data) return <div>Loading...</div>;
+
+  console.log(data)
 
   return (
     <div className="min-h-screen bg-background">
-      {/* <Header /> */}
-      
       <div className="flex">
-        <FilterPanel isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} />
+        {/* Sidebar Filter - Wrapped in Suspense because it uses useSearchParams */}
+        <Suspense fallback={<div className="w-72 hidden lg:block border-r" />}>
+           <FilterToggleWrapper />
+        </Suspense>
         
         <main className="flex-1 p-4 md:p-6 lg:p-8">
-          {/* Page Header */}
           <div className="mb-6">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">Practice Problems</h1>
             <p className="text-muted-foreground">
@@ -95,61 +71,36 @@ const Problems = () => {
             </p>
           </div>
 
-          {/* Controls */}
           <div className="mb-6 space-y-4">
-            {/* Search Bar - Full Width on Mobile */}
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search problems..."
-                className="pl-9 bg-secondary/50 border-border focus:bg-background"
-              />
-            </div>
+            {/* Search - Suspense needed for useSearchParams */}
+            <Suspense fallback={<div className="h-10 w-full bg-secondary/50 rounded-md animate-pulse" />}>
+              <SearchInput />
+            </Suspense>
 
-            {/* Filters and Sort Controls */}
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-3 flex-wrap">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="lg:hidden"
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                >
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filters
-                </Button>
+                {/* Mobile Filter Toggle is inside FilterToggleWrapper */}
                 
-                <Select defaultValue="recent">
-                  <SelectTrigger className="w-[140px] md:w-[180px]">
-                    <SelectValue placeholder="Sort by" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="recent">Most Recent</SelectItem>
-                    <SelectItem value="difficulty">Difficulty</SelectItem>
-                    <SelectItem value="acceptance">Acceptance Rate</SelectItem>
-                    <SelectItem value="title">Title</SelectItem>
-                  </SelectContent>
-                </Select>
+                {/* Sort Control */}
+                {/* To make this functional, you would create a generic client wrapper 
+                    like <SortSelect /> similar to SearchInput */}
+                <SortSelect />
               </div>
 
               <span className="text-sm text-muted-foreground">
-                {mockProblems.length} problems
+                {data.total} problems
               </span>
             </div>
           </div>
 
-          {/* Problems Table */}
-          <ProblemTable problems={mockProblems} />
+          <ProblemTable problems={data.problems} />
 
-          {/* Pagination Info */}
+          {/* Pagination would go here, utilizing params.page */}
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            Showing 1-8 of {mockProblems.length} problems
+             Page {data.page} of {data.totalPages}
           </div>
         </main>
       </div>
     </div>
   );
-};
-
-export default Problems;
+}

@@ -2,18 +2,10 @@ import { Badge } from "@/components/ui/badge";
 import DifficultyBadge from "./DifficultyBadge";
 import StatusIcon from "./StatusIcon";
 import Link from "next/link";
-
-export interface Problem {
-  id: number;
-  title: string;
-  difficulty: "Easy" | "Medium" | "Hard";
-  acceptance: number;
-  tags: string[];
-  status: "solved" | "attempted" | "unsolved";
-}
+import { ProblemI } from "@/models/problem.model";
 
 interface ProblemTableProps {
-  problems: Problem[];
+  problems: ProblemI[];
 }
 
 const ProblemTable = ({ problems }: ProblemTableProps) => {
@@ -32,20 +24,20 @@ const ProblemTable = ({ problems }: ProblemTableProps) => {
       <div className="divide-y">
         {problems.map((problem) => (
           <Link
-            key={problem.id}
-            href={`/problems/${problem.id}`}
+            key={problem.problemId}
+            href={`/problems/${problem.problemId}`}
             className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 p-4 transition-smooth hover:bg-muted/50 group"
           >
             {/* Mobile: Title first */}
             <div className="md:hidden col-span-1 mb-2">
               <h3 className="font-medium group-hover:text-primary transition-smooth">
-                {problem.id}. {problem.title}
+               {problem.title}
               </h3>
             </div>
 
             {/* Status */}
             <div className="flex items-center gap-2 md:col-span-1">
-              <StatusIcon status={problem.status} />
+              <StatusIcon status={"unsolved"} />
               <span className="md:hidden text-xs text-muted-foreground capitalize">
                 {problem.status}
               </span>
@@ -54,7 +46,7 @@ const ProblemTable = ({ problems }: ProblemTableProps) => {
             {/* Title - Desktop only */}
             <div className="hidden md:flex items-center md:col-span-5">
               <h3 className="font-medium group-hover:text-primary transition-smooth">
-                {problem.id}. {problem.title}
+                {problem.title}
               </h3>
             </div>
 
@@ -67,20 +59,20 @@ const ProblemTable = ({ problems }: ProblemTableProps) => {
             <div className="flex items-center md:col-span-2">
               <span className="text-sm text-muted-foreground">
                 <span className="md:hidden mr-1">Acceptance:</span>
-                {problem.acceptance}%
+                {Math.floor(Math.random() * 101)}%
               </span>
             </div>
 
             {/* Tags */}
             <div className="flex items-center gap-1 md:col-span-2 flex-wrap">
-              {problem.tags.slice(0, 2).map((tag) => (
-                <Badge key={tag} variant="secondary" className="text-xs">
-                  {tag}
+              {problem.category.slice(0, 2).map((c) => (
+                <Badge key={c} variant="secondary" className="text-xs">
+                  {c}
                 </Badge>
               ))}
-              {problem.tags.length > 2 && (
+              {problem.category.length > 2 && (
                 <Badge variant="secondary" className="text-xs">
-                  +{problem.tags.length - 2}
+                  +{problem.category.length - 2}
                 </Badge>
               )}
             </div>

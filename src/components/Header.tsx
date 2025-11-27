@@ -184,7 +184,7 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link href={"/auth/login"}>
+            <Link href={"/a/login"}>
             <Button className="hidden md:flex">Sign In</Button>
             </Link>
           )}
