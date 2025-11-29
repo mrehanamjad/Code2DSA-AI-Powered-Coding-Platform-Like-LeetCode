@@ -1,6 +1,6 @@
-"use client"
+"use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -10,64 +10,93 @@ import { ProblemPanel } from "@/components/ProblemPanel";
 import { EditorPanel } from "@/components/EditorPanel";
 import { ChatPanel } from "@/components/ChatPanel";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { problems } from "@/data/problems";
-import { Code2, ArrowLeft, ChevronLeft, ChevronRight, Timer, Play, Pause } from "lucide-react";import { Button } from "@/components/ui/button";
+import {
+  Code2,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Timer,
+  Play,
+  Pause,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { apiClient } from "@/lib/apiClient";
+import { toast } from "sonner";
+import { ProblemI } from "@/models/problem.model";
+import { TestCaseI } from "@/models/testcase.model";
 
-export default function ProblemPage({ params }: { params: { id: string } }) {
+type Params = {
+  id: string;
+};
+
+export default function ProblemPage() {
   const router = useRouter();
   const isMobile = useIsMobile();
-    const problemId = params.id;
-  const [selectedProblemId, setSelectedProblemId] = useState(
-    problemId || problems[0].id
-  );
+  const { id } = useParams<Params>();
+  const problemId = id;
+
   const [theme, setTheme] = useState("dark");
   const [activeTab, setActiveTab] = useState<"problem" | "editor" | "chat">(
     "problem"
   );
 
-const [elapsedTime, setElapsedTime] = useState(0);
+  const [elapsedTime, setElapsedTime] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(true);
 
-  const selectedProblem =
-    problems.find((p) => p.id === selectedProblemId) || problems[0];
+  const [problem, setProblem] = useState<ProblemI | null>(null);
+  const [testCases, setTestCases] = useState<TestCaseI[] | null>([]);
 
-  const currentIndex = problems.findIndex((p) => p.id === selectedProblemId);
-  const hasPrevious = currentIndex > 0;
-  const hasNext = currentIndex < problems.length - 1;
+  // const currentIndex = problems.findIndex((p) => p.id === selectedProblemId);
+  // const hasPrevious = currentIndex > 0;
+  // const hasNext = currentIndex < problems.length - 1;
 
   const formatTime = (seconds: number) => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    return `${hrs.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    return `${hrs.toString().padStart(2, "0")}:${mins
+      .toString()
+      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const handlePrevious = () => {
-    if (hasPrevious) {
-      const prevProblem = problems[currentIndex - 1];
-      setSelectedProblemId(prevProblem.id);
-      router.push(`/problems/${prevProblem.id}`);
-      setElapsedTime(0);
+  const loadProblems = async (problemId: string) => {
+    const res = await apiClient.getAProblem(problemId);
+    if (!res.success) {
+      return toast.error(res.error);
     }
-  };
 
-  const handleNext = () => {
-    if (hasNext) {
-      const nextProblem = problems[currentIndex + 1];
-      setSelectedProblemId(nextProblem.id);
-      router.push(`/problems/${nextProblem.id}`);
-      setElapsedTime(0);
-    }
+    console.log(res);
+
+    setProblem(res.data?.problem as ProblemI);
+    setTestCases(res.data?.testCases as TestCaseI[]);
   };
 
   useEffect(() => {
     if (problemId) {
-      setSelectedProblemId(problemId);
+      loadProblems(problemId);
       setElapsedTime(0);
       setIsTimerRunning(true);
     }
   }, [problemId]);
+
+  // const handlePrevious = () => {
+  //   if (hasPrevious) {
+  //     const prevProblem = problems[currentIndex - 1];
+  //     setSelectedProblemId(prevProblem.id);
+  //     router.push(`/problems/${prevProblem.id}`);
+  //     setElapsedTime(0);
+  //   }
+  // };
+
+  // const handleNext = () => {
+  //   if (hasNext) {
+  //     const nextProblem = problems[currentIndex + 1];
+  //     setSelectedProblemId(nextProblem.id);
+  //     router.push(`/problems/${nextProblem.id}`);
+  //     setElapsedTime(0);
+  //   }
+  // };
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -87,9 +116,7 @@ const [elapsedTime, setElapsedTime] = useState(0);
   useEffect(() => {
     const observer = new MutationObserver(() => {
       setTheme(
-        document.documentElement.classList.contains("dark")
-          ? "dark"
-          : "light"
+        document.documentElement.classList.contains("dark") ? "dark" : "light"
       );
     });
 
@@ -103,7 +130,7 @@ const [elapsedTime, setElapsedTime] = useState(0);
 
   return (
     <div className="h-screen flex flex-col bg-background">
-            <header className="border-b border-border px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+      <header className="border-b border-border px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
@@ -114,7 +141,7 @@ const [elapsedTime, setElapsedTime] = useState(0);
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <Code2 className="h-6 w-6 text-primary" />
-             <h1 className="text-lg sm:text-xl font-bold text-foreground hidden sm:block">
+          <h1 className="text-lg sm:text-xl font-bold text-foreground hidden sm:block">
             CodeMaster
           </h1>
         </div>
@@ -139,7 +166,7 @@ const [elapsedTime, setElapsedTime] = useState(0);
             </Button>
           </div>
 
-          <div className="flex items-center gap-1">
+          {/* <div className="flex items-center gap-1">
             <Button
               variant="outline"
               size="sm"
@@ -160,7 +187,7 @@ const [elapsedTime, setElapsedTime] = useState(0);
               <span className="hidden sm:inline">Next</span>
               <ChevronRight className="h-4 w-4" />
             </Button>
-          </div>
+          </div> */}
 
           <ThemeToggle />
         </div>
@@ -203,14 +230,10 @@ const [elapsedTime, setElapsedTime] = useState(0);
 
           <div className="flex-1 min-h-0">
             {activeTab === "problem" && (
-              <ProblemPanel
-                problems={problems}
-                selectedProblem={selectedProblem}
-                onProblemChange={setSelectedProblemId}
-              />
+              <ProblemPanel selectedProblem={problem!} />
             )}
             {activeTab === "editor" && (
-              <EditorPanel problem={selectedProblem} theme={theme} />
+              <EditorPanel problem={problem as ProblemI} testCases={testCases as TestCaseI[]} theme={theme} />
             )}
             {activeTab === "chat" && <ChatPanel />}
           </div>
@@ -220,16 +243,14 @@ const [elapsedTime, setElapsedTime] = useState(0);
           <ResizablePanelGroup direction="horizontal" className="h-full">
             <ResizablePanel defaultSize={25} minSize={20}>
               <ProblemPanel
-                problems={problems}
-                selectedProblem={selectedProblem}
-                onProblemChange={setSelectedProblemId}
+                selectedProblem={problem!}
               />
             </ResizablePanel>
 
             <ResizableHandle withHandle />
 
             <ResizablePanel defaultSize={50} minSize={30}>
-              <EditorPanel problem={selectedProblem} theme={theme} />
+              <EditorPanel problem={problem as ProblemI} testCases={testCases as TestCaseI[]} theme={theme} />
             </ResizablePanel>
 
             <ResizableHandle withHandle />

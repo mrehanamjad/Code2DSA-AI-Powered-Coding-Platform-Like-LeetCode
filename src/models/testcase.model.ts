@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, models } from "mongoose";
 
-interface TestCaseI {
+export interface TestCaseI {
   problemId: mongoose.Types.ObjectId;
   input: any[];
   expected: any;

@@ -1,4 +1,5 @@
 import { ProblemI } from "@/models/problem.model";
+import { TestCaseI } from "@/models/testcase.model";
 import mongoose from "mongoose";
 
 
@@ -66,8 +67,8 @@ class ApiClient {
   // Endpoints
   // ------------------------
 
-  async getProblems() {
-    return this.request<ProblemI[]>(`/problems`);
+  async getAProblem(problemId: string) {
+    return this.request<{problem: ProblemI; testCases: TestCaseI[]}>(`/problems/${problemId}`);
   }
 
   //   async editVideo(id: string, data: { title?: string; description?: string }) {

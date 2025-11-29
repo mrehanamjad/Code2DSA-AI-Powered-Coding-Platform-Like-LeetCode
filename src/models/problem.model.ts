@@ -2,13 +2,13 @@ import mongoose, { Schema, Document, models, Model } from "mongoose";
 import aggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
 // --- Interfaces ---
-interface ExampleI {
+export interface ExampleI {
   input: string;
   output: string;
   explanation?: string;
 }
 
-interface StarterCodeI {
+export interface StarterCodeI {
   javascript: string;
   typescript: string;
   python: string;
