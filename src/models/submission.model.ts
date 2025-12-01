@@ -13,7 +13,7 @@ export interface SubmissionI extends Document {
     input: string;
     expectedOutput: string;
     actualOutput: string;
-    error?: string; // optional, e.g., runtime error
+    error?: string;
   } | null;
   note?: string;
   createdAt?: Date;
@@ -26,16 +26,15 @@ const SubmissionSchema: Schema<SubmissionI> = new Schema(
       type: Schema.Types.ObjectId,
       required: true,
       ref: "Problem",
+      index: true,
     },
     userId: {
       type: Schema.Types.ObjectId,
       required: true,
       ref: "User",
+      index: true,
     },
-    code: {
-      type: String,
-      required: true,
-    },
+    code: { type: String, required: true },
     language: {
       type: String,
       required: true,
@@ -55,18 +54,13 @@ const SubmissionSchema: Schema<SubmissionI> = new Schema(
         "kotlin",
       ],
     },
-    totalTestCases: {
-      type: Number,
-      required: true,
-    },
-    passedTestCases: {
-      type: Number,
-      required: true,
-    },
+    totalTestCases: { type: Number, required: true },
+    passedTestCases: { type: Number, required: true },
     status: {
       type: String,
       required: true,
       enum: ["accepted", "wrongAnswer", "runtimeError", "compileError", "tle"],
+      index: true,
     },
     lastFailedTestCase: {
       type: {
@@ -77,16 +71,15 @@ const SubmissionSchema: Schema<SubmissionI> = new Schema(
       },
       default: null,
     },
-    note: {
-      type: String,
-      default: "",
-    },
+    note: { type: String, default: "" },
   },
   { timestamps: true }
 );
 
+// Compound Index: userId + problemId (FAST lookup for your GET API)
+SubmissionSchema.index({ userId: 1, problemId: 1 });
+
 const Submission =
-  models.Submission ||
-  mongoose.model<SubmissionI>("Submission", SubmissionSchema);
+  models.Submission || mongoose.model<SubmissionI>("Submission", SubmissionSchema);
 
 export default Submission;

@@ -159,6 +159,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { ProblemI } from "@/models/problem.model";
+import { SubmissionsForProblem } from "./SubmissionsForProblem";
 
 interface ProblemPanelProps {
   selectedProblem: ProblemI;
@@ -258,15 +259,11 @@ export function ProblemPanel({
           </TabsContent>
 
           <TabsContent value="submissions" className="p-4">
-            <Card className="p-6 bg-card">
-              <p className="text-muted-foreground text-center">
-                No submissions yet. Submit your solution to see your submission
-                history.
-              </p>
-            </Card>
+            <SubmissionsForProblem problemId={selectedProblem && selectedProblem._id as string} />
           </TabsContent>
         </Tabs>
       </div>
     </div>
   );
 }
+

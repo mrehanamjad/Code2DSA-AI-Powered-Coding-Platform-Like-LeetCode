@@ -10,6 +10,18 @@ type FetchOpts = {
   headers?: Record<string, string>;
 };
 
+export interface SubmissionForProblemI extends Document {
+  _id: mongoose.Types.ObjectId;
+  problemId: mongoose.Types.ObjectId;
+  language: string;
+  status: "accepted" | "wrongAnswer" | "runtimeError" | "compileError" | "tle";
+  note?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+
+
 type ApiResponse<T> = {
   success: boolean;
   data?: T;
@@ -84,6 +96,11 @@ class ApiClient {
       body: { note },
     });
   }
+
+  async getSubmissionsForProblem(problemId: string) {
+    return this.request<SubmissionForProblemI[]>(`/submissions/problem/${problemId}`);
+  }
+
 
   //   async editVideo(id: string, data: { title?: string; description?: string }) {
   //     return await this.myFetch(`/videos/${id}/edit`, {
