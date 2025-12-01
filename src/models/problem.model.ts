@@ -33,7 +33,7 @@ export interface ProblemI extends Document {
   problemId: string;
   title: string;
   difficulty: "Easy" | "Medium" | "Hard";
-  category: string[];
+  topics: string[];
   status: "Not Started" | "In Progress" | "Completed";
   function: FunctionI;
   description: string;
@@ -90,7 +90,7 @@ const ProblemSchema: Schema<ProblemI> = new Schema(
       enum: ["Easy", "Medium", "Hard"],
       required: true,
     },
-    category: { type: [String], required: true },
+    topics: { type: [String], required: true },
     function: { type: FunctionSchema, required: true },
     description: { type: String, required: true },
     examples: { type: [ExampleSchema], required: true },

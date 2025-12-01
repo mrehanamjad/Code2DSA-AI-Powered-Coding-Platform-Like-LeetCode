@@ -15,7 +15,6 @@ interface SubmissionTabProps {
 }
 
 export function SubmissionTab({ output, code, language, paramNames }: SubmissionTabProps) {
-  const [note, setNote] = useState(output.note || "");
   const [activeCaseId, setActiveCaseId] = useState(0);
 
   // Auto-select the first failed case if WRONG_ANSWER
@@ -77,20 +76,7 @@ export function SubmissionTab({ output, code, language, paramNames }: Submission
         <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <PenLine className="h-4 w-4" /> Notes
         </div>
-        {/* <div className="flex flex-col gap-2">
-            <Textarea 
-                placeholder="Add a note (e.g., Time complexity O(n))..."
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                className="min-h-[80px] text-sm resize-none bg-muted/20 focus:bg-background"
-            />
-            <div className="flex justify-end">
-                <Button size="sm" onClick={handleSave} disabled={isSaving} className="h-8">
-                    {isSaving ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : <Save className="h-3 w-3 mr-2" />} Save Note
-                </Button>
-            </div>
-        </div> */}
-        <Note savedNote={note} submissionId={output.submissionId!} />
+        <Note savedNote={output.note || ""} submissionId={output.submissionId!} />
       </div>
     </div>
   );

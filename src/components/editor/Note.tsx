@@ -45,10 +45,6 @@ function Note({
   };
 
   return (
-    // {/* <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-100"> */}
-    //   {/* <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-    //     <PenLine className="h-4 w-4" /> Notes
-    //   </div> */}
       <div className="flex flex-col gap-2">
         <Textarea
           placeholder="Add a note (e.g., Time complexity O(n))..."
@@ -83,7 +79,6 @@ function Note({
           </Button>
         </div>
       </div>
-    // {/* </div> */}
   );
 }
 

@@ -17,7 +17,7 @@ const ProblemTable = ({ problems }: ProblemTableProps) => {
         <div className="col-span-5">Title</div>
         <div className="col-span-2">Difficulty</div>
         <div className="col-span-2">Acceptance</div>
-        <div className="col-span-2">Tags</div>
+        <div className="col-span-2">Topics</div>
       </div>
 
       {/* Table Body */}
@@ -65,14 +65,14 @@ const ProblemTable = ({ problems }: ProblemTableProps) => {
 
             {/* Tags */}
             <div className="flex items-center gap-1 md:col-span-2 flex-wrap">
-              {problem.category.slice(0, 2).map((c) => (
-                <Badge key={c} variant="secondary" className="text-xs">
-                  {c}
+              {problem?.topics?.slice(0, 2).map((topic) => (
+                <Badge key={topic} variant="secondary" className="text-xs">
+                  {topic}
                 </Badge>
               ))}
-              {problem.category.length > 2 && (
+              {problem?.topics?.length > 2 && (
                 <Badge variant="secondary" className="text-xs">
-                  +{problem.category.length - 2}
+                  +{problem?.topics?.length - 2}
                 </Badge>
               )}
             </div>

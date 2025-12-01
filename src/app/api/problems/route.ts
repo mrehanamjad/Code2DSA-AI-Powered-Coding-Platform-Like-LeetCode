@@ -21,7 +21,7 @@ import { AuthOptions } from '@/lib/auth';
 //     const page = parseInt(searchParams.get('page') || '1');
 //     const limit = parseInt(searchParams.get('limit') || '10');
 //     const difficulty = searchParams.get('difficulty');
-//     const category = searchParams.get('topics');
+//     const topics = searchParams.get('topics');
 //     const search = searchParams.get('query');
 
 //     // Build Aggregation Pipeline
@@ -32,8 +32,8 @@ import { AuthOptions } from '@/lib/auth';
 //       pipeline.push({ $match: { difficulty: difficulty } });
 //     }
 
-//     if (category) {
-//       pipeline.push({ $match: { category: { $in: [category] } } });
+//     if (topics) {
+//       pipeline.push({ $match: { topics: { $in: [topics] } } });
 //     }
 
 //     if (search) {
@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
     };
 
     const difficulties = parseParam('difficulty');
-    const categories = parseParam('topics');
+    const topics = parseParam('topics');
     const statuses = parseParam('status'); // ["Solved", "Unsolved"]
 
     // 2. Get User Session (NextAuth)
@@ -111,8 +111,8 @@ export async function GET(req: NextRequest) {
       matchStage.difficulty = { $in: difficulties };
     }
 
-    if (categories && categories.length > 0) {
-      matchStage.category = { $in: categories };
+    if (topics && topics.length > 0) {
+      matchStage.topics = { $in: topics };
     }
 
     if (query) {
@@ -293,7 +293,6 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
-        console.log("POST :: problem API :: Called")
 
     await connectionToDatabase();
     const body = await req.json();

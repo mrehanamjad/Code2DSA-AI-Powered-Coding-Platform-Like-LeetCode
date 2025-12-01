@@ -7,7 +7,7 @@ export interface Problem {
   examples: Example[];
   constraints: string[];
   starterCode: Record<string, string>;
-  category: string[];
+  topics: string[];
   status?: "Not Started" | "Attempted" | "Solved";
   testCases?: TestCase[]
 }

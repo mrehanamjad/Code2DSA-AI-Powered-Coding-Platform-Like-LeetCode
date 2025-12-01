@@ -3721,6 +3721,8 @@ import {
   TestCaseDetail,
 } from "./editor/EditorComponents";
 import { SubmissionTab } from "./editor/SubmissionTab";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface EditorPanelProps {
   problem: ProblemI;
@@ -3774,7 +3776,9 @@ export function EditorPanel({
   const [activeTab, setActiveTab] = useState<TabType>("testcase");
   const [activeTestCaseId, setActiveTestCaseId] = useState<number>(0);
   const [isConsoleOpen, setIsConsoleOpen] = useState(true);
-  const { toast } = useToast();
+
+  const {data:session} =  useSession()
+  const router = useRouter()
 
   useEffect(() => {
     if (problem) {
@@ -3788,7 +3792,9 @@ export function EditorPanel({
     setIsRunning(true);
     setIsConsoleOpen(true);
     setActiveTab(type === "run" ? "result" : "submission");
-
+    if(type == "submit" && (!session || !session?.user.id) ) {
+      router.push("/a/login")
+    }
     try {
       const wrapperFunction = wrapperMap[language];
       if (!wrapperFunction)
@@ -3912,6 +3918,7 @@ export function EditorPanel({
         const saveRes = await apiClient.createSubmission(
           submissionPayload as SubmissionI
         );
+        console.log(saveRes)
         if (saveRes.success && saveRes.data)
           dbSubmissionId = String(saveRes.data._id);
       }
