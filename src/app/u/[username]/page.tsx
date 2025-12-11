@@ -70,7 +70,7 @@ const createdAt = userData?.createdAt?.toString() || "";
           <StatsOverview data={{...userStats} as StatsOverviewPrompI} />
           <ContributionGraph userId={userData._id.toString()} userJoiningTime={userData.createdAt!} />
           <Achievements badges={userStats?.badge || []} />
-          <RecentActivity  />
+          <RecentActivity userId={userData._id.toString()}  />
         </div>
         <div className="md:col-span-1">
           <SkillsAndLang  languages={userStats?.languages || []} skills={userStats?.skills || []}/>

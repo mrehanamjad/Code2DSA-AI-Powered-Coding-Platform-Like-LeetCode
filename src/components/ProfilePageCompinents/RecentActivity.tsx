@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { CheckCircle, Clock, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import RecentACTable from './RecentACTable'
 
 const activities = [
   {
@@ -95,7 +96,7 @@ const challenges = [
   },
 ]
 
-export default function RecentActivity() {
+export default function RecentActivity({userId}:{userId:string}) {
   const [currentPage, setCurrentPage] = useState(0)
   const [activeTab, setActiveTab] = useState<'recent' | 'list' | 'challenges'>('recent')
   const itemsPerPage = 5
@@ -113,18 +114,7 @@ export default function RecentActivity() {
 
   const currentData = getTabData()
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Easy':
-        return 'bg-green-500/20 text-green-700 dark:text-green-400'
-      case 'Medium':
-        return 'bg-amber-500/20 text-amber-700 dark:text-amber-400'
-      case 'Hard':
-        return 'bg-red-500/20 text-red-700 dark:text-red-400'
-      default:
-        return 'bg-gray-500/20 text-gray-700 dark:text-gray-400'
-    }
-  }
+
 
   const handleTabChange = (tab: 'recent' | 'list' | 'challenges') => {
     setActiveTab(tab)
@@ -150,54 +140,18 @@ export default function RecentActivity() {
         <h3 className='text-lg font-bold'>Activity</h3>
       </div>
 
-      <div className='flex gap-2 mb-6 border-b border-border pb-2'>
+      <div className='flex gap-2 mb-3 border-b border-border pb-2'>
         <TabButton tab='recent' label='Recent Activity' />
         <TabButton tab='list' label='My List' />
         <TabButton tab='challenges' label='Challenges' />
       </div>
 
       <div className='overflow-x-auto'>
-        <table className='w-full text-sm'>
-          <thead>
-            <tr className='border-b border-border'>
-              <th className='text-left py-3 px-2 font-semibold text-muted-foreground'>Problem</th>
-              <th className='text-left py-3 px-2 font-semibold text-muted-foreground'>Difficulty</th>
-              <th className='text-left py-3 px-2 font-semibold text-muted-foreground hidden sm:table-cell'>Status</th>
-              <th className='text-left py-3 px-2 font-semibold text-muted-foreground hidden md:table-cell'>
-                Time
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentData.map((activity) => {
-              const StatusIcon = activity.statusIcon
-              return (
-                <tr key={activity.id} className='border-b border-border hover:bg-card-foreground/5 transition-colors'>
-                  <td className='py-4 px-2'>
-                    <p className='font-medium truncate'>{activity.problem}</p>
-                  </td>
-                  <td className='py-4 px-2'>
-                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getDifficultyColor(activity.difficulty)}`}>
-                      {activity.difficulty}
-                    </span>
-                  </td>
-                  <td className='py-4 px-2 hidden sm:table-cell'>
-                    <div className='flex items-center gap-2'>
-                      <StatusIcon className={`w-4 h-4 ${activity.statusColor}`} />
-                      <span className='text-xs'>{activity.status}</span>
-                    </div>
-                  </td>
-                  <td className='py-4 px-2 hidden md:table-cell text-xs text-muted-foreground'>
-                    {activity.timestamp}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+       <RecentACTable userId={userId} />
       </div>
 
-      <div className='flex items-center justify-between mt-6 pt-6 border-t border-border'>
+        {/* pagination: */}
+      {/* <div className='flex items-center justify-between mt-6 pt-6 border-t border-border'>
         <p className='text-sm text-muted-foreground'>
           Showing {currentPage * itemsPerPage + 1} to {Math.min((currentPage + 1) * itemsPerPage, currentData.length)} of {currentData.length}
         </p>
@@ -219,7 +173,7 @@ export default function RecentActivity() {
             <ChevronRight className='w-4 h-4' />
           </Button>
         </div>
-      </div>
+      </div> */}
     </Card>
   )
 }
