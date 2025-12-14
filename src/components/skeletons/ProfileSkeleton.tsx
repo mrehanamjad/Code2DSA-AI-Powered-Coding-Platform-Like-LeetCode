@@ -97,7 +97,7 @@ const ProfileSkeleton = () => {
 
               {/* Column 3: Solved Difficulty (Tall Card) */}
               <div className="bg-[#18181B] border border-[#27272A] rounded-2xl p-6 flex flex-col items-center justify-center h-auto min-h-[340px] xl:col-span-1 md:col-span-2 xl:row-span-1">
-                <div className="w-full h-4 bg-[#27272A] rounded mb-8 self-start w-32" />
+                <div className="w-full h-4 bg-[#27272A] rounded mb-8 self-start " />
                 {/* Donut Chart Skeleton */}
                 <div className="relative h-40 w-40 rounded-full border-8 border-[#27272A] flex items-center justify-center">
                    <div className="h-8 w-8 bg-[#27272A] rounded" />

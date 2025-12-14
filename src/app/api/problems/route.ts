@@ -1,101 +1,37 @@
-import { NextRequest, NextResponse } from 'next/server';
-import Problem from '@/models/problem.model';
-import { connectionToDatabase } from '@/lib/db';
-import Submission from '@/models/submission.model';
-import mongoose from 'mongoose';
-import { getServerSession } from 'next-auth';
-import { AuthOptions } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import Problem from "@/models/problem.model";
+import { connectionToDatabase } from "@/lib/db";
+import mongoose from "mongoose";
+import { getServerSession } from "next-auth";
+import { AuthOptions } from "@/lib/auth";
 
 /**
  * @method GET
  * @desc Fetch all problems with pagination and filtering
  */
 
-// export async function GET(req: NextRequest) {
-//   try {
-//     await connectionToDatabase();
-
-//     const { searchParams } = new URL(req.url);
-    
-//     // Extract Query Params
-//     const page = parseInt(searchParams.get('page') || '1');
-//     const limit = parseInt(searchParams.get('limit') || '10');
-//     const difficulty = searchParams.get('difficulty');
-//     const topics = searchParams.get('topics');
-//     const search = searchParams.get('query');
-
-//     // Build Aggregation Pipeline
-//     const pipeline: any[] = [];
-
-//     // 1. Filtering
-//     if (difficulty) {
-//       pipeline.push({ $match: { difficulty: difficulty } });
-//     }
-
-//     if (topics) {
-//       pipeline.push({ $match: { topics: { $in: [topics] } } });
-//     }
-
-//     if (search) {
-//       // Simple regex search on title or problemId
-//       pipeline.push({
-//         $match: {
-//           $or: [
-//             { title: { $regex: search, $options: 'i' } },
-//             { problemId: { $regex: search, $options: 'i' } }
-//           ]
-//         }
-//       });
-//     }
-
-//     // 2. Sorting (Optional - Default by newest)
-//     pipeline.push({ $sort: { createdAt: -1 } });
-
-//     // 3. Use aggregatePaginate
-//     const options = {
-//       page,
-//       limit,
-//     };
-
-//     // Create the aggregate object
-//     const myAggregate = Problem.aggregate(pipeline);
-    
-//     // Execute pagination
-//     const result = await Problem.aggregatePaginate(myAggregate, options);
-
-//     return NextResponse.json(result, { status: 200 });
-
-//   } catch (error: any) {
-//     console.error("GET /api/problems Error:", error);
-//     return NextResponse.json(
-//       { error: 'Failed to fetch problems', details: error.message },
-//       { status: 500 }
-//     );
-//   }
-// }
-
 export async function GET(req: NextRequest) {
   try {
     await connectionToDatabase();
 
     const searchParams = req.nextUrl.searchParams;
-    
+
     // 1. Extract & Parse Query Params
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const query = searchParams.get('query');
-    const sort = searchParams.get('sort') || 'newest'; // Default to newest
-    
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const query = searchParams.get("query");
+    const sort = searchParams.get("sort") || "newest"; // Default to newest
+
     // Helper to split "Easy,Medium" into ["Easy", "Medium"]
     const parseParam = (key: string) => {
       const val = searchParams.get(key);
       if (!val) return undefined;
-      return val.split(',');
+      return val.split(",");
     };
 
-    const difficulties = parseParam('difficulty');
-    const topics = parseParam('topics');
-    const statuses = parseParam('status'); // ["Solved", "Unsolved"]
+    const difficulties = parseParam("difficulty");
+    const topics = parseParam("topics");
+    const statuses = parseParam("status"); // ["Solved", "Unsolved"]
 
     // 2. Get User Session (NextAuth)
     const session = await getServerSession(AuthOptions);
@@ -117,8 +53,8 @@ export async function GET(req: NextRequest) {
 
     if (query) {
       matchStage.$or = [
-        { title: { $regex: query, $options: 'i' } },
-        { problemId: { $regex: query, $options: 'i' } }
+        { title: { $regex: query, $options: "i" } },
+        { problemId: { $regex: query, $options: "i" } },
       ];
     }
 
@@ -138,15 +74,15 @@ export async function GET(req: NextRequest) {
                   $expr: {
                     $and: [
                       { $eq: ["$problemId", "$$problemId"] },
-                      { $eq: ["$userId", new mongoose.Types.ObjectId(userId)] }
-                    ]
-                  }
-                }
+                      { $eq: ["$userId", new mongoose.Types.ObjectId(userId)] },
+                    ],
+                  },
+                },
               },
-              { $project: { status: 1, _id: 0 } }
+              { $project: { status: 1, _id: 0 } },
             ],
-            as: "userSubmissions"
-          }
+            as: "userSubmissions",
+          },
         },
         // 2. Calculate 'status' field based on submissions
         {
@@ -161,12 +97,12 @@ export async function GET(req: NextRequest) {
                         $filter: {
                           input: "$userSubmissions",
                           as: "sub",
-                          cond: { $eq: ["$$sub.status", "success"] }
-                        }
-                      }
+                          cond: { $eq: ["$$sub.status", "success"] },
+                        },
+                      },
                     },
-                    0
-                  ]
+                    0,
+                  ],
                 },
                 then: "Solved",
                 else: {
@@ -174,12 +110,12 @@ export async function GET(req: NextRequest) {
                     // If any submissions exist but none are success -> Attempted
                     if: { $gt: [{ $size: "$userSubmissions" }, 0] },
                     then: "Attempted",
-                    else: "Unsolved"
-                  }
-                }
-              }
-            }
-          }
+                    else: "Unsolved",
+                  },
+                },
+              },
+            },
+          },
         },
         // 3. Clean up the joined array
         { $project: { userSubmissions: 0 } }
@@ -199,10 +135,10 @@ export async function GET(req: NextRequest) {
         // If filtering by Status but not logged in:
         // Only return results if they asked for 'Unsolved' (default)
         if (statuses.includes("Unsolved") && statuses.length === 1) {
-           // Pass through (all are treated as unsolved)
+          // Pass through (all are treated as unsolved)
         } else {
-           // If they asked for 'Solved' or 'Attempted' but aren't logged in, return nothing
-           pipeline.push({ $match: { _id: null } }); 
+          // If they asked for 'Solved' or 'Attempted' but aren't logged in, return nothing
+          pipeline.push({ $match: { _id: null } });
         }
       }
     }
@@ -211,7 +147,7 @@ export async function GET(req: NextRequest) {
     let sortStage: any = { createdAt: -1 }; // Default fallback
 
     // Map difficulty to numeric weights for logical sorting
-    if (sort === 'difficulty_asc' || sort === 'difficulty_desc') {
+    if (sort === "difficulty_asc" || sort === "difficulty_desc") {
       pipeline.push({
         $addFields: {
           difficultyWeight: {
@@ -219,32 +155,32 @@ export async function GET(req: NextRequest) {
               branches: [
                 { case: { $eq: ["$difficulty", "Easy"] }, then: 1 },
                 { case: { $eq: ["$difficulty", "Medium"] }, then: 2 },
-                { case: { $eq: ["$difficulty", "Hard"] }, then: 3 }
+                { case: { $eq: ["$difficulty", "Hard"] }, then: 3 },
               ],
-              default: 0
-            }
-          }
-        }
+              default: 0,
+            },
+          },
+        },
       });
     }
 
     switch (sort) {
-      case 'oldest':
+      case "oldest":
         sortStage = { createdAt: 1 };
         break;
-      case 'newest':
+      case "newest":
         sortStage = { createdAt: -1 };
         break;
-      case 'title_asc':
+      case "title_asc":
         sortStage = { title: 1 };
         break;
-      case 'title_desc':
+      case "title_desc":
         sortStage = { title: -1 };
         break;
-      case 'difficulty_asc':
+      case "difficulty_asc":
         sortStage = { difficultyWeight: 1 };
         break;
-      case 'difficulty_desc':
+      case "difficulty_desc":
         sortStage = { difficultyWeight: -1 };
         break;
       default:
@@ -258,30 +194,29 @@ export async function GET(req: NextRequest) {
       page,
       limit,
       customLabels: {
-        totalDocs: 'totalProblems',
-        docs: 'problems',
-        limit: 'pageSize',
-        page: 'currentPage',
-        nextPage: 'next',
-        prevPage: 'prev',
-        totalPages: 'totalPages',
-        pagingCounter: 'slNo',
-        meta: 'paginator',
+        totalDocs: "totalProblems",
+        docs: "problems",
+        limit: "pageSize",
+        page: "currentPage",
+        nextPage: "next",
+        prevPage: "prev",
+        totalPages: "totalPages",
+        pagingCounter: "slNo",
+        meta: "paginator",
       },
     };
 
     // Execute
     const myAggregate = Problem.aggregate(pipeline);
-    
+
     // @ts-ignore
     const result = await Problem.aggregatePaginate(myAggregate, options);
 
     return NextResponse.json(result, { status: 200 });
-
   } catch (error: any) {
     console.error("GET /api/problems Error:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch problems', details: error.message },
+      { error: "Failed to fetch problems", details: error.message },
       { status: 500 }
     );
   }
@@ -293,6 +228,18 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
+    const session = await getServerSession(AuthOptions);
+
+    if (!session?.user.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (
+      session?.user.id.toString() !== "693eb2bfe588a4e1e4a208c6" &&
+      session?.user.username !== "rehan7161"
+    ) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     await connectionToDatabase();
     const body = await req.json();
@@ -300,16 +247,18 @@ export async function POST(req: NextRequest) {
     // Basic validation check (Mongoose will handle detailed validation)
     if (!body.problemId || !body.title || !body.difficulty) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
     // Check for duplicate problemId
-    const existingProblem = await Problem.findOne({ problemId: body.problemId });
+    const existingProblem = await Problem.findOne({
+      problemId: body.problemId,
+    });
     if (existingProblem) {
       return NextResponse.json(
-        { error: 'Problem ID already exists' },
+        { error: "Problem ID already exists" },
         { status: 409 }
       );
     }
@@ -317,14 +266,13 @@ export async function POST(req: NextRequest) {
     const newProblem = await Problem.create(body);
 
     return NextResponse.json(
-      { message: 'Problem created successfully', problem: newProblem },
+      { message: "Problem created successfully", problem: newProblem },
       { status: 201 }
     );
-
   } catch (error: any) {
     console.error("POST /api/problems Error:", error);
     return NextResponse.json(
-      { error: 'Failed to create problem', details: error.message },
+      { error: "Failed to create problem", details: error.message },
       { status: 500 }
     );
   }

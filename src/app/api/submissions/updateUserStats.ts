@@ -1,4 +1,3 @@
-// lib/actions/updateUserStats.ts
 import UserStatistic from "@/models/userStatistic.model";
 import Submission from "@/models/submission.model";
 import Problem from "@/models/problem.model"; // Assuming you have this

@@ -1,4 +1,3 @@
-// components/ProblemHeader.tsx
 "use client";
 
 import { useState, useEffect, memo } from "react";

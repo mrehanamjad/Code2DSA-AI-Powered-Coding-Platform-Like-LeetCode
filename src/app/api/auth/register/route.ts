@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectionToDatabase } from "@/lib/db";
 import User from "@/models/user.model";
+import UserStatistic from "@/models/userStatistic.model";
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,7 +27,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await User.create({ email, password,userName,name });
+    const user = await User.create({ email, password,userName,name });
+
+    await UserStatistic.create({ userId: user._id });
+
 
     return NextResponse.json(
         { message: "User created successfully" },

@@ -8,6 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { apiClient } from "@/lib/apiClient/apiClient";
 
 // --- Types ---
 type ContributionLevel = 0 | 1 | 2 | 3 | 4;
@@ -56,24 +57,23 @@ export default function ContributionGraph({
     return new Date(userJoiningTime).getFullYear();
   }, [userJoiningTime]);
 
-  // 1. Fetch Data
+// 1. Fetch Data
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      try {
-        const res = await fetch(
-          `/api/user/statistics/${userId}/activity?year=${selectedYear}`
-        );
-        const json = await res.json();
-        if (res.ok) {
-          setApiData(json);
-        }
-      } catch (error) {
-        console.error("Failed to fetch graph data", error);
-      } finally {
-        setLoading(false);
+      
+      const result = await apiClient.getUserGraph(userId, selectedYear);
+
+      if (result.success) {
+        // result.data contains the parsed JSON response
+        setApiData(result.data as ApiResponse);
+      } else {
+        console.error("Failed to fetch graph data:", result.error);
       }
+      
+      setLoading(false);
     }
+
     fetchData();
   }, [userId, selectedYear]);
 

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import TestCase from "@/models/testcase.model";
 import { connectionToDatabase } from "@/lib/db";
+import { getServerSession } from "next-auth";
+import { AuthOptions } from "@/lib/auth";
 
 // GET: Fetch all test cases, or filter by 'problemId' query param
 export async function GET(request: NextRequest) {
@@ -27,7 +29,16 @@ export async function GET(request: NextRequest) {
 // POST: Create a new test case
 export async function POST(request: NextRequest) {
   try {
-    console.log("POST :: testcase API :: Called")
+    const session = await getServerSession(AuthOptions);
+
+    if(!session?.user.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if(session?.user.id.toString() !== "693eb2bfe588a4e1e4a208c6" && session?.user.username !== "rehan7161") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     await connectionToDatabase();
     const body = await request.json();
 

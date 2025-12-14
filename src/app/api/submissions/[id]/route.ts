@@ -4,7 +4,8 @@ import { AuthOptions } from "@/lib/auth";
 import { connectionToDatabase } from "@/lib/db";
 import Submission, { SubmissionI } from "@/models/submission.model";
 import mongoose from "mongoose";
-import { SubmissionResponseT } from "@/lib/apiClient/types";
+import { PopulatedProblem } from "@/lib/apiClient/types";
+import Problem from "@/models/problem.model"; // Ensure this is imported
 
 /**
  * @method GET
@@ -13,7 +14,7 @@ import { SubmissionResponseT } from "@/lib/apiClient/types";
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } 
 ) {
   try {
     const session = await getServerSession(AuthOptions);
@@ -21,21 +22,27 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const submissionId = await params.id;
+    // 2. Await params before using properties
+    const { id: submissionId } = await params;
+
     if (!mongoose.Types.ObjectId.isValid(submissionId)) {
         return NextResponse.json({ error: "Invalid ID format" }, { status: 400 });
     }
 
     await connectionToDatabase();
 
+    // 3. Fix MissingSchemaError by explicitly passing the Problem model to populate
     const submission = await Submission.findById(submissionId)
-        .populate("problemId", "title problemId difficulty function") 
-        .lean() as SubmissionResponseT | null;
+        .populate<{ problemId: PopulatedProblem }>({
+            path: "problemId",
+            model: Problem, // Explicitly use the imported model
+            select: "title problemId difficulty function"
+        }) 
+        .lean() as SubmissionI | null;
 
     if (!submission) {
       return NextResponse.json({ error: "Submission not found" }, { status: 404 });
     }
-
 
     if (submission.userId.toString() !== session.user.id) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -51,4 +58,3 @@ export async function GET(
     );
   }
 }
-

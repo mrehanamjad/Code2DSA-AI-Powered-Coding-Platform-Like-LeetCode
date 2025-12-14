@@ -11,7 +11,7 @@ import mongoose from "mongoose";
  */
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }>  }
 ) {
   try {
     // --- 1. Authenticate user ---
@@ -34,7 +34,8 @@ export async function PATCH(
     }
 
     // --- 3. Validate submission ID ---
-    const submissionId = params.id;
+    const {id} = await params;
+    const submissionId = id;
     if (!mongoose.Types.ObjectId.isValid(submissionId)) {
       return NextResponse.json(
         { error: "Invalid submission ID format" },

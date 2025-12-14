@@ -20,10 +20,7 @@ import {
   detailsSchema,
   usernameSchema,
   passwordSchema,
-  DetailsFormValues,
-  UsernameFormValues,
-  PasswordFormValues,
-} from "@/lib/schemas"; // Import from step 1
+} from "@/lib/schemas"; 
 import { useSession } from "next-auth/react";
 
 interface EditFieldModalProps {

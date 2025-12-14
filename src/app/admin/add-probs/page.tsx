@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 // Make sure this path matches exactly where your file is located
 import { problems } from "@/data/problems";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 type LogEntry = {
   problem: string;
@@ -11,6 +13,14 @@ type LogEntry = {
 };
 
 export default function SeedProblemsPage() {
+    const router = useRouter();
+    const {data:session} = useSession();
+    if(!session || (session && session.user.username !== "rehan7161")) {
+      router.push("/");
+    }
+
+
+
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState({
@@ -26,11 +36,9 @@ export default function SeedProblemsPage() {
     let processedCount = 0;
 
     const postTestCases = async (problemId: string, testCases: any[]) => {
-        console.log("i am in test case api calling")
       let idx = 0;
       for (const testCase of testCases) {
         try {
-            console.log(idx < 3 ? false : true, idx)
           const payload = {
             problemId,
             isHidden:idx < 3 ? false : true,
@@ -85,7 +93,6 @@ export default function SeedProblemsPage() {
         // 3. Handle Responses
         if (response.status === 201) {
           addLog(result.problem._id, "success", "Created successfully");
-          console.log(result)
             await postTestCases(result.problem._id.toString(), problem.testCases!);
         } else if (response.status === 409) {
           addLog(problem.title, "skipped", "Already exists in database");

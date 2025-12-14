@@ -26,18 +26,6 @@ import { cn } from "@/lib/utils";
 import { SubmissionsForProblem } from "@/components/SubmissionsForProblem";
 import Link from "next/link";
 
-// --- Import your nested component here ---
-// import { SubmissionsForProblem } from "@/components/SubmissionsForProblem";
-
-// Temporary placeholder if you don't have the component file yet
-// const SubmissionsForProblem = ({ problemId }: { problemId: string }) => (
-//   <div className="p-4 text-center text-sm text-muted-foreground bg-muted/30 rounded-md border border-dashed border-border">
-//     {/* This is where your actual component renders */}
-//     <p>Loading specific submissions for problem ID: {problemId}...</p>
-//     <p className="text-xs mt-1">(Replace this placeholder with your actual component)</p>
-//   </div>
-// );
-
 // --- Types ---
 type SubmissionGroup = {
   problemId: string;

@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
-import { CheckCircle, Clock, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react'
+import { CheckCircle, Clock, AlertCircle, ChevronLeft, ChevronRight, ArrowLeft, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import RecentACTable from './RecentACTable'
+import Link from 'next/link'
 
 const activities = [
   {
@@ -97,9 +98,8 @@ const challenges = [
 ]
 
 export default function RecentActivity({userId}:{userId:string}) {
-  const [currentPage, setCurrentPage] = useState(0)
+  // const [currentPage, setCurrentPage] = useState(0)
   const [activeTab, setActiveTab] = useState<'recent' | 'list' | 'challenges'>('recent')
-  const itemsPerPage = 5
 
   const getTabData = () => {
     switch (activeTab) {
@@ -118,7 +118,7 @@ export default function RecentActivity({userId}:{userId:string}) {
 
   const handleTabChange = (tab: 'recent' | 'list' | 'challenges') => {
     setActiveTab(tab)
-    setCurrentPage(0)
+    // setCurrentPage(0)
   }
 
   const TabButton = ({ tab, label }: { tab: 'recent' | 'list' | 'challenges'; label: string }) => (
@@ -142,11 +142,14 @@ export default function RecentActivity({userId}:{userId:string}) {
 
       <div className='flex gap-2 mb-3 border-b border-border pb-2'>
         <TabButton tab='recent' label='Recent Activity' />
-        <TabButton tab='list' label='My List' />
-        <TabButton tab='challenges' label='Challenges' />
+        {/* <TabButton tab='list' label='My List' /> */}
+        {/* <TabButton tab='challenges' label='Challenges' /> */}
       </div>
 
       <div className='overflow-x-auto'>
+        <div className='flex flex-row-reverse'>
+          <Link href={'/progress'} ><Button variant={'ghost'} size={"sm"} className='text-sm cursor-pointer'>View All Submissions <ArrowRight /> </Button></Link>
+        </div>
        <RecentACTable userId={userId} />
       </div>
 

@@ -1,9 +1,6 @@
 "use client";
 import { useState } from "react";
 import { TerminalInput } from "@/components/AuthComponents/TerminalInput";
-import { TerminalOutput } from "@/components/AuthComponents/TerminalOutput";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { ASCIIArt } from "@/components/AuthComponents/ASCIIArt";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -18,7 +15,6 @@ const Login = () => {
     password: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showOutput, setShowOutput] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -31,8 +27,6 @@ const Login = () => {
     }
     
     setIsSubmitting(true);
-    setShowOutput(true);
-
     const result = await signIn("credentials", {
       email: formData.email,
       password: formData.password,
@@ -123,7 +117,7 @@ const Login = () => {
               {/* Footer */}
               <div className="mt-8 pt-4 border-t border-terminal-border">
                 <p className="text-xs text-muted-foreground text-center">
-                  <span className="text-primary">&gt;</span> codeVerse v2.1.0 —
+                  <span className="text-primary">&gt;</span> Code2DSA v2.1.0 —
                   Secure access mode
                 </p>
               </div>

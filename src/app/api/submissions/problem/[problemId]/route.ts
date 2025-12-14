@@ -11,7 +11,7 @@ import mongoose from "mongoose";
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { problemId: string } }
+  { params }: { params: Promise<{ problemId: string }> }
 ) {
   try {
     // --- 1. Authenticate User ---
@@ -20,7 +20,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { problemId } = params;
+    const { problemId } = await params;
 
     // --- 2. Validate ObjectId ---
     if (!mongoose.Types.ObjectId.isValid(problemId)) {

@@ -1,8 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
-import { useToast } from "@/hooks/use-toast";
-import { Loader2, Play, Send, Clock } from "lucide-react"; // Only simple icons needed here
+import { Play, Send, Clock } from "lucide-react"; // Only simple icons needed here
 import {
   CppWrapper,
   JavaScriptWrapper,
@@ -32,7 +31,7 @@ import {
 import { SubmissionTab } from "./editor/SubmissionTab";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import {  useAppSelector } from "@/lib/redux/hooks";
 import { toast } from "sonner";
 
 interface EditorPanelProps {
@@ -96,7 +95,7 @@ export function EditorPanel({
   const router = useRouter();
 
   const languageIS = useAppSelector(
-    (state) => state.submission.currentCodeLanguage
+    (state) => state.code.currentCodeLanguage
   );
 
   useEffect(() => {
@@ -154,7 +153,6 @@ export function EditorPanel({
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
       const result = await response.json();
-      console.log("result from piston api after parsing",result)
       const executionTime = Math.round(performance.now() - startTime);
 
       // --- Status Logic ---
@@ -178,7 +176,6 @@ export function EditorPanel({
           .filter((l: string) => l.trim());
         for (const line of lines) {
           const match = line.match(/Test\s+(\d+):\s+(PASSED|FAILED|ERROR)/i);
-          console.log("match",match)
           if (!match) continue;
           const testNumber = parseInt(match[1]);
           const st = match[2].toUpperCase();
@@ -194,21 +191,16 @@ export function EditorPanel({
             /Output:\s*(.+?)\s*\|\s*Expected:\s*(.+?)$/i
           );
           if (outMatch) {
-            console.log("output match",outMatch)
             let output, expected;
             try {
               output = JSON.parse(outMatch[1]);
-              console.log("output parsed",output)
             } catch {
               output = outMatch[1];
-              console.log("output not parsed",output)
             }
             try {
               expected = JSON.parse(outMatch[2]);
-              console.log("expected parsed",expected)
             } catch {
               expected = outMatch[2];
-              console.log("expected not parsed",expected)
             }
             parsedResults.push({
               testNumber,
@@ -253,7 +245,6 @@ export function EditorPanel({
         const saveRes = await apiClient.createSubmission(
           submissionPayload as SubmissionI
         );
-        console.log(saveRes);
         if (saveRes.success && saveRes.data)
           dbSubmissionId = String(saveRes.data._id);
       }

@@ -1,5 +1,3 @@
-import { Skeleton } from "@/components/ui/skeleton"; // Assuming you have shadcn skeleton, if not use a div with 'animate-pulse bg-muted'
-
 export function ProblemSkeleton() {
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">

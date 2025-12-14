@@ -67,33 +67,6 @@ function categorizeSkillsByName(skills: Skill[]): CategorizedSkills {
   return categories;
 }
 
-// const languages = [
-//   { name: "Python", questioSolved: 20 },
-//   { name: "Java", questioSolved: 2 },
-// ];
-
-// const skills = [
-//   { name: "Array", questionSolved: 6 },
-//   { name: "String", questionSolved: 2 },
-//   { name: "Hash Table", questionSolved: 4 },
-//   { name: "Linked List", questionSolved: 3 },
-//   { name: "Stack", questionSolved: 5 },
-//   { name: "Queue", questionSolved: 3 },
-//   { name: "Tree", questionSolved: 7 },
-//   { name: "Graph", questionSolved: 2 },
-//   { name: "Dynamic Programming", questionSolved: 1 },
-//   { name: "Recursion", questionSolved: 4 },
-//   { name: "Sorting", questionSolved: 3 },
-//   { name: "Searching", questionSolved: 2 },
-//   { name: "Two Pointers", questionSolved: 5 },
-//   { name: "Sliding Window", questionSolved: 3 },
-//   { name: "Greedy", questionSolved: 2 },
-//   { name: "Binary Search", questionSolved: 4 },
-//   { name: "Backtracking", questionSolved: 2 },
-//   { name: "Math", questionSolved: 3 },
-//   { name: "Bit Manipulation", questionSolved: 1 },
-//   { name: "Matrix", questionSolved: 3 },
-// ];
 
 
 export function SkillsAndLang({languages,skills}: {

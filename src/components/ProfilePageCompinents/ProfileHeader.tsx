@@ -1,10 +1,9 @@
-"use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Calendar, Edit, MessageCircle, Users, Phone } from "lucide-react";
-import { useSession } from "next-auth/react";
+import {  Calendar, Edit, Phone } from "lucide-react";
+import Link from "next/link";
 
 export const ProfileHeader = ({
   avatar,
@@ -16,6 +15,7 @@ export const ProfileHeader = ({
   userName,
   level,
   userId,
+  sessionUserId
 }: {
   avatar: { id: string; url: string };
   name: string;
@@ -29,8 +29,9 @@ export const ProfileHeader = ({
   level: number;
   userName: string;
   userId: string;
+  sessionUserId: string;
 }) => {
-  const { data: session } = useSession();
+
   return (
     <Card className="p-6 bg-gradient-to-br from-card to-muted/30 border-border/50 shadow-lg hover:shadow-xl transition-all duration-300">
       <div className="flex flex-col md:flex-row gap-6">
@@ -56,7 +57,7 @@ export const ProfileHeader = ({
               <p className="text-muted-foreground mb-3 max-w-2xl">
                 {bio ||
                   `No bio provided yet. ${
-                    session?.user.id === userId &&
+                    sessionUserId === userId &&
                     "Edit your profile and add a bio! to tell others about yourself!"
                   }`}
               </p>
@@ -74,15 +75,17 @@ export const ProfileHeader = ({
               </div>
             </div>
 
-            {session?.user.id === userId && (
+            {sessionUserId === userId && (
               <div className="flex gap-2">
+                <Link href={"/profile"} >
                 <Button
                   size="sm"
-                  className="bg-primary hover:bg-primary-hover text-primary-foreground shadow-md"
+                  variant="outline"
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   Edit Profile
                 </Button>
+                </Link>
               </div>
             )}
           </div>

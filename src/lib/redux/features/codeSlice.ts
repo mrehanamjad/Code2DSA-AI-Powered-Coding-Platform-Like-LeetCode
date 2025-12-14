@@ -8,18 +8,14 @@ const getInitialLanguage = () => {
 };
 
 const initialState = {
-  submissionId: "",
   currentCodeLanguage: getInitialLanguage(),
 };
 
 
-export const submissionSlice = createSlice({
+export const codeSlice = createSlice({
     name: "submission",
     initialState,
     reducers: {
-        setSubmissionIdIS: (state, action) => {
-            state.submissionId = action.payload
-        },
         setCurrentCodeLanguageIS: (state, action) => {
             state.currentCodeLanguage = action.payload
             localStorage.setItem("currentCodeLanguage", action.payload || state.currentCodeLanguage )
@@ -28,6 +24,6 @@ export const submissionSlice = createSlice({
 
 })
 
-export const { setSubmissionIdIS , setCurrentCodeLanguageIS} = submissionSlice.actions
+export const { setCurrentCodeLanguageIS} = codeSlice.actions
 
-export default submissionSlice.reducer
+export default codeSlice.reducer

@@ -1,8 +1,6 @@
 import { ProblemI } from "@/models/problem.model";
 import { SubmissionI } from "@/models/submission.model";
 import { TestCaseI } from "@/models/testcase.model";
-import { UserI } from "@/models/user.model";
-import mongoose from "mongoose";
 import { SubmissionForProblemI, SubmissionResponseT } from "./types";
 
 // utils/apiClient.ts
@@ -94,6 +92,12 @@ class ApiClient {
   async getSubmissionDetailById(submissionId: string){
     return this.request<SubmissionResponseT>(`/submissions/${submissionId}`);
   }
+
+  async getUserGraph(userId: string,selectedYear: number) {
+    return this.request(`/user/statistics/${userId}/activity?year=${selectedYear}`);
+  }
+
+
 
 
   //   async editVideo(id: string, data: { title?: string; description?: string }) {

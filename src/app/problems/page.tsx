@@ -1,9 +1,7 @@
 import { Suspense } from "react";
-import FilterPanel from "@/components/FilterPanel";
 import ProblemTable from "@/components/ProblemTable";
 import SearchInput from "@/components/SearchInput";
 import FilterToggleWrapper from "@/components/FilterToggleWrapper"; // New small wrapper
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProblemI } from "@/models/problem.model";
 import { SortSelect } from "@/components/SortSelect";
 
@@ -53,8 +51,6 @@ export default async function ProblemsPage({ searchParams }: PageProps) {
 
   if (!data) return <div>Loading...</div>;
 
-  console.log(data)
-
   return (
     <div className="min-h-screen bg-background">
       <div className="flex">
@@ -82,8 +78,6 @@ export default async function ProblemsPage({ searchParams }: PageProps) {
                 {/* Mobile Filter Toggle is inside FilterToggleWrapper */}
                 
                 {/* Sort Control */}
-                {/* To make this functional, you would create a generic client wrapper 
-                    like <SortSelect /> similar to SearchInput */}
                 <SortSelect />
               </div>
 

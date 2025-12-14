@@ -48,8 +48,7 @@ const Settings = () => {
           const res = await fetch(`/api/user/${sessionUsername}`);
           if (!res.ok) throw new Error("Failed to fetch user data");
           const data = await res.json();
-          console.log(data.data)
-          setUser(data.data); // Assuming API returns the PublicUser object directly
+          setUser(data.data); 
         } catch (error) {
           console.error(error);
           toast({

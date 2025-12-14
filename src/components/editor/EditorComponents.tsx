@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { 
   AlertOctagon, Check, ChevronDown, ChevronUp, Clock, 
@@ -8,10 +7,9 @@ import {
   Terminal, Beaker, FileCheck, PenLine, AlertTriangle 
 } from "lucide-react";
 import { useState } from "react";
-import { ExecutionResult, TabType, isCriticalError } from "./types";
-import { StarterCodeI } from "@/models/problem.model";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
-import { setCurrentCodeLanguageIS } from "@/lib/redux/features/submissionSlice";
+import {  TabType } from "./types";
+import { useAppDispatch } from "@/lib/redux/hooks";
+import { setCurrentCodeLanguageIS } from "@/lib/redux/features/codeSlice";
 
 // --- 1. TOOLBAR ---
 interface ToolbarProps {

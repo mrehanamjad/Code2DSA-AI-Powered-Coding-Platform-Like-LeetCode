@@ -15,7 +15,6 @@ export const TerminalOutput = ({ onComplete,outputLines }: TerminalOutputProps) 
 
 
   useEffect(() => {
-    // console.log(outputLines)
     outputLines.forEach((line, index) => {
       setTimeout(() => {
         if (!visibleLines.includes(line.text)) {

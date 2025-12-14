@@ -25,7 +25,6 @@ function RecentACTable({userId}:{userId:string}) {
         if (res.ok) {
           const data = await res.json();
           setSubmissions(data);
-          console.log("recent activitye data api: ",data)
         }
       } catch (error) {
         console.error("Failed to fetch recent submissions", error);

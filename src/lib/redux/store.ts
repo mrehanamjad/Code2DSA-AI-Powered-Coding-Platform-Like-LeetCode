@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
-import submissionReducer  from '../redux/features/submissionSlice'
+import codeReducer  from './features/codeSlice'
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
-      submission : submissionReducer
+      code : codeReducer
     },
   })
 }

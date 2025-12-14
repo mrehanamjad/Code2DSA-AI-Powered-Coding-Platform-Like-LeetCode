@@ -5,9 +5,9 @@ import TestCase from '@/models/testcase.model';
 
 // Define params type for App Router
 type Props = {
-  params: {
+  params: Promise<{
     problemId: string;
-  };
+  }>;
 };
 
 /**
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest, { params }: Props) {
   try {
     await connectionToDatabase();
 
-    const { problemId } = params;
+    const { problemId } = await params;
 
     // 1. Find the problem by its public problemId string
     const problem = await Problem.findOne({ problemId });
@@ -82,7 +82,7 @@ export async function PUT(req: NextRequest, { params }: Props) {
   try {
     await connectionToDatabase();
     
-    const { problemId } = params;
+    const { problemId } = await params;
     const body = await req.json();
 
     // Prevent updating problemId if necessary, or check for duplicates if allowed
@@ -130,7 +130,7 @@ export async function DELETE(req: NextRequest, { params }: Props) {
   try {
     await connectionToDatabase();
     
-    const { problemId } = params;
+    const { problemId } = await params;
 
     const deletedProblem = await Problem.findOneAndDelete({ problemId });
 

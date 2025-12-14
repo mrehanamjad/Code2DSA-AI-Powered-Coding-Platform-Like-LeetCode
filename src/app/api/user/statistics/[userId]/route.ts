@@ -1,5 +1,4 @@
 import { connectionToDatabase } from "@/lib/db";
-import User, { UserI } from "@/models/user.model";
 import UserStatistic, { UserStatisticI } from "@/models/userStatistic.model";
 import { Types } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
@@ -10,7 +9,6 @@ export async function GET(
 ) {
   try {
     const { userId } = await  params;
-    console.log("i am api ualled,",userId)
     await connectionToDatabase();
 
     if (!userId) {
@@ -19,9 +17,8 @@ export async function GET(
         { status: 400 }
       );
     }
-    console.log("goging to get userSatas")
+    
     const userStats = await UserStatistic.findOne({ userId: new Types.ObjectId(userId) }) as UserStatisticI;
-    console.log("--> stats --->",userStats)
     if (!userStats) {
       return NextResponse.json({ message: "User statistics not found" }, { status: 404 });
     }
