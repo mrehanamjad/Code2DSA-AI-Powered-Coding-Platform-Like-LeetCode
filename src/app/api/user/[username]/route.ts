@@ -1,4 +1,4 @@
-import { PublicUser } from "@/lib/apiClient";
+import { PublicUser } from "@/lib/apiClient/types";
 import { connectionToDatabase } from "@/lib/db";
 import User, { UserI } from "@/models/user.model";
 import { NextResponse } from "next/server";

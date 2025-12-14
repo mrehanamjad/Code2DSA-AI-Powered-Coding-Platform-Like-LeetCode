@@ -1,4 +1,3 @@
-import { PublicUser } from "@/lib/apiClient";
 import { connectionToDatabase } from "@/lib/db";
 import User, { UserI } from "@/models/user.model";
 import UserStatistic, { UserStatisticI } from "@/models/userStatistic.model";

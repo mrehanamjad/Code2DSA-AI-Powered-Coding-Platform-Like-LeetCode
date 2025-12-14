@@ -284,7 +284,7 @@ import { ProblemHeader } from "@/components/ProblemHeader";
 import { ProblemSkeleton } from "@/components/skeletons/ProblemSkeleton"; // Import Skeleton
 import { ProblemNotFound } from "@/components/ProblemNotFound"; // Import Not Found
 import { useIsMobile } from "@/hooks/use-mobile";
-import { apiClient } from "@/lib/apiClient";
+import { apiClient } from "@/lib/apiClient/apiClient";
 import { toast } from "sonner";
 import { ProblemI } from "@/models/problem.model";
 import { TestCaseI } from "@/models/testcase.model";

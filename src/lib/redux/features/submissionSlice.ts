@@ -1,8 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit"
 
+const getInitialLanguage = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("currentCodeLanguage") || "javascript";
+  }
+  return "javascript";
+};
+
 const initialState = {
-    submissionId : ""
-}
+  submissionId: "",
+  currentCodeLanguage: getInitialLanguage(),
+};
+
 
 export const submissionSlice = createSlice({
     name: "submission",
@@ -10,11 +19,15 @@ export const submissionSlice = createSlice({
     reducers: {
         setSubmissionIdIS: (state, action) => {
             state.submissionId = action.payload
-        }
+        },
+        setCurrentCodeLanguageIS: (state, action) => {
+            state.currentCodeLanguage = action.payload
+            localStorage.setItem("currentCodeLanguage", action.payload || state.currentCodeLanguage )
+        }   
     }
 
 })
 
-export const { setSubmissionIdIS } = submissionSlice.actions
+export const { setSubmissionIdIS , setCurrentCodeLanguageIS} = submissionSlice.actions
 
 export default submissionSlice.reducer

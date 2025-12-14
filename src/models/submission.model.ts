@@ -21,10 +21,22 @@ export interface SubmissionI extends Document {
     actualOutput: string;
     error?: string;
   } | null;
+  error?: string;
   note?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+
+const FailedTestCaseSchema = new Schema(
+  {
+    input: String,
+    expectedOutput: String,
+    actualOutput: String,
+    error: { type: String, default: null },
+  },
+  { _id: false }
+);
 
 const SubmissionSchema = new Schema<SubmissionI>(
   {
@@ -68,13 +80,9 @@ const SubmissionSchema = new Schema<SubmissionI>(
       enum: ["accepted", "wrongAnswer", "runtimeError", "compileError", "tle"],
       index: true,
     },
+    error: { type: String, default: null },
     lastFailedTestCase: {
-      type: {
-        input: String,
-        expectedOutput: String,
-        actualOutput: String,
-        error: { type: String, default: null },
-      },
+      type: FailedTestCaseSchema,
       default: null,
     },
     note: { type: String, default: "" },

@@ -4,7 +4,7 @@ import { ProfileHeader } from "@/components/ProfilePageCompinents/ProfileHeader"
 import RecentActivity from "@/components/ProfilePageCompinents/RecentActivity";
 import { SkillsAndLang } from "@/components/ProfilePageCompinents/SkillsAndLang";
 import { StatsOverview } from "@/components/ProfilePageCompinents/StatsOverview";
-import { PublicUser } from "@/lib/apiClient";
+import { PublicUser } from "@/lib/apiClient/types";
 import { UserStatisticI } from "@/models/userStatistic.model";
 import { StatsOverviewPrompI } from "@/types/compInterfaces";
 import React from "react";

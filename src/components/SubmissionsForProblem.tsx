@@ -2,23 +2,23 @@
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { apiClient, SubmissionForProblemI } from "@/lib/apiClient";
+import { apiClient } from "@/lib/apiClient/apiClient";
 import { Loader2, FilePenLine, Plus, X, ArrowUpRight } from "lucide-react";
 import Note from "./editor/Note";
-import { useAppDispatch } from "@/lib/redux/hooks";
-import { setSubmissionIdIS } from "@/lib/redux/features/submissionSlice";
+import { SubmissionForProblemI } from "@/lib/apiClient/types";
+import SubmissionPopup from "./editor/SubmissionPopup";
 
 interface SubmissionsForProblemProps {
   problemId: string;
-  isPage?: boolean
+  isEditor?: boolean
 }
 
-export function SubmissionsForProblem({ problemId, isPage = false }: SubmissionsForProblemProps) {
+export function SubmissionsForProblem({ problemId, isEditor = true }: SubmissionsForProblemProps) {
   const [submissions, setSubmissions] = useState<SubmissionForProblemI[]>([]);
   const [loading, setLoading] = useState(false);
-  const dispatch = useAppDispatch();
   // Modal State
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+  const [isSubmissionModelOpen, setIsSubmissionModelOpen] = useState(false);
   const [currentSubmissionId, setCurrentSubmissionId] = useState<string | null>(
     null
   );
@@ -48,38 +48,23 @@ export function SubmissionsForProblem({ problemId, isPage = false }: Submissions
   const openNoteModal = (submissionId: string, currentNote?: string) => {
     setCurrentSubmissionId(submissionId);
     setNoteContent(currentNote || "");
-    setIsModalOpen(true);
+    setIsNoteModalOpen(true);
   };
 
   const closeNoteModal = () => {
-    setIsModalOpen(false);
+    setIsNoteModalOpen(false);
     setCurrentSubmissionId(null);
     setNoteContent("");
   };
 
-  const handleSaveNoteState = async () => {
-    if (!currentSubmissionId) return;
+  const openSubmissionModal = (submissionId: string) => {
+    setCurrentSubmissionId(submissionId);
+    setIsSubmissionModelOpen(true);
+  };
 
-    setSavingNote(true);
-    const response = await apiClient.addOrUpdateSubmissionNote(
-      currentSubmissionId,
-      noteContent
-    );
-    setSavingNote(false);
-
-    if (response.success) {
-      // Update local state locally to reflect change immediately
-      setSubmissions((prev) =>
-        prev.map((sub) =>
-          sub._id.toString() === currentSubmissionId
-            ? { ...sub, note: noteContent }
-            : sub
-        )
-      );
-      closeNoteModal();
-    } else {
-      alert("Failed to save note");
-    }
+  const closeSubmissionModal = () => {
+    setIsSubmissionModelOpen(false);
+    setCurrentSubmissionId(null);
   };
 
   // --- Helpers ---
@@ -128,9 +113,7 @@ export function SubmissionsForProblem({ problemId, isPage = false }: Submissions
     return date.toLocaleDateString();
   };
 
-  const handleOpenBtnClick = (submissionId: string) => {
-      dispatch(setSubmissionIdIS(submissionId))
-  }
+ 
 
   return (
     <>
@@ -157,7 +140,7 @@ export function SubmissionsForProblem({ problemId, isPage = false }: Submissions
                   className="border-b transition-colors hover:bg-muted/30"
                 >
                   <td className="p-4">
-                    <button  onClick={() => handleOpenBtnClick(sub._id.toString())} >
+                    <button  onClick={() => openSubmissionModal(sub._id.toString())} >
                     <ArrowUpRight className="w-4 h-4" />
                     </button>
                   </td>
@@ -212,7 +195,7 @@ export function SubmissionsForProblem({ problemId, isPage = false }: Submissions
       )}
 
       {/* --- Global Modal/Popup Overlay --- */}
-      {isModalOpen && (
+      {isNoteModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <Card className="w-full max-w-md p-6 shadow-xl animate-in fade-in zoom-in duration-200 border-border/40 bg-background/95">
             <div className="flex justify-between items-center mb-4">
@@ -225,33 +208,19 @@ export function SubmissionsForProblem({ problemId, isPage = false }: Submissions
               </button>
             </div>
 
-            {/* <textarea
-              className="w-full min-h-[120px] p-3 rounded-md border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
-              placeholder="Write your notes here regarding this approach..."
-              value={noteContent}
-              onChange={(e) => setNoteContent(e.target.value)}
-              autoFocus
-            /> */}
-
-            {/* <div className="flex justify-end gap-2 mt-4"> */}
-              {/* <button
-                onClick={closeNoteModal}
-                className="px-4 py-2 text-sm font-medium rounded-md hover:bg-muted transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveNote}
-                disabled={savingNote}
-                className="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2"
-              >
-                {savingNote && <Loader2 className="w-4 h-4 animate-spin" />}
-                Save Note
-              </button> */}
-            {/* </div> */}
+            
             <Note submissionId={currentSubmissionId!} savedNote={noteContent} closeNoteModal={closeNoteModal} setSubmissions={setSubmissions} />
           </Card>
         </div>
+      )}
+      {isSubmissionModelOpen && (
+        <SubmissionPopup 
+          isEditor={isEditor}
+          submissionId={currentSubmissionId!}
+          closeModel={closeSubmissionModal}
+          setSubmissionsForSubmissionTable={setSubmissions}
+          
+        />
       )}
     </>
   );

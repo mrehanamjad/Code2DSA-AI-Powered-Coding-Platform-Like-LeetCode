@@ -3,6 +3,7 @@ import { SubmissionI } from "@/models/submission.model";
 import { TestCaseI } from "@/models/testcase.model";
 import { UserI } from "@/models/user.model";
 import mongoose from "mongoose";
+import { SubmissionForProblemI, SubmissionResponseT } from "./types";
 
 // utils/apiClient.ts
 type FetchOpts = {
@@ -10,21 +11,6 @@ type FetchOpts = {
   body?: unknown;
   headers?: Record<string, string>;
 };
-
-
-export interface SubmissionForProblemI extends Document {
-  _id: mongoose.Types.ObjectId;
-  problemId: mongoose.Types.ObjectId;
-  language: string;
-  status: "accepted" | "wrongAnswer" | "runtimeError" | "compileError" | "tle";
-  note?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export type PublicUser = Omit<UserI, "password">;
-
-
 
 type ApiResponse<T> = {
   success: boolean;
@@ -103,6 +89,10 @@ class ApiClient {
 
   async getSubmissionsForProblem(problemId: string) {
     return this.request<SubmissionForProblemI[]>(`/submissions/problem/${problemId}`);
+  }
+
+  async getSubmissionDetailById(submissionId: string){
+    return this.request<SubmissionResponseT>(`/submissions/${submissionId}`);
   }
 
 

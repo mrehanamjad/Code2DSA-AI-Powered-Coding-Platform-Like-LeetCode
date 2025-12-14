@@ -367,6 +367,7 @@ export default function PracticeHistory() {
                                     {/* Render the Nested Component */}
                                     <SubmissionsForProblem
                                       problemId={item.problemId}
+                                      isEditor={false}
                                     />
                                   </div>
                                 </TableCell>

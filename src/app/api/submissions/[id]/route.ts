@@ -4,6 +4,7 @@ import { AuthOptions } from "@/lib/auth";
 import { connectionToDatabase } from "@/lib/db";
 import Submission, { SubmissionI } from "@/models/submission.model";
 import mongoose from "mongoose";
+import { SubmissionResponseT } from "@/lib/apiClient/types";
 
 /**
  * @method GET
@@ -20,25 +21,22 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const submissionId = params.id;
+    const submissionId = await params.id;
     if (!mongoose.Types.ObjectId.isValid(submissionId)) {
         return NextResponse.json({ error: "Invalid ID format" }, { status: 400 });
     }
 
     await connectionToDatabase();
 
-    // Cast the result to SubmissionI | null to resolve the 'userId does not exist' error
-    // Populate 'problemId' (the slug field in Problem model), 'title', and 'difficulty'
     const submission = await Submission.findById(submissionId)
-        .populate("problemId", "title problemId difficulty") 
-        .lean() as SubmissionI | null;
+        .populate("problemId", "title problemId difficulty function") 
+        .lean() as SubmissionResponseT | null;
 
     if (!submission) {
       return NextResponse.json({ error: "Submission not found" }, { status: 404 });
     }
 
-    // Authorization Check:
-    // Ensure the logged-in user owns this submission
+
     if (submission.userId.toString() !== session.user.id) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

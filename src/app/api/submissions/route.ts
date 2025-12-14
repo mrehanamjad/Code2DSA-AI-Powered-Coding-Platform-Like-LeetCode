@@ -13,92 +13,6 @@ import { recordDailyActivity } from "./recordActivity";
  * @note Usually called after the code execution engine returns a result.
  */
 
-// export async function POST(req: NextRequest) {
-//   try {
-//     // --- 1. Authenticate user ---
-//     const session = await getServerSession(AuthOptions);
-//     if (!session?.user?.id) {
-//       return NextResponse.json(
-//         { error: "Unauthorized" },
-//         { status: 401 }
-//       );
-//     }
-
-//     // --- 2. Connect to DB ---
-//     await connectionToDatabase();
-
-//     // --- 3. Parse and validate body ---
-//     const body = await req.json();
-
-//     const {
-//       problemId,
-//       code,
-//       language,
-//       totalTestCases = 0,
-//       passedTestCases = 0,
-//       status,
-//       lastFailedTestCase = null,
-//       note = "",
-//     } = body;
-
-//     if (!problemId || !code || !language || !status) {
-//       return NextResponse.json(
-//         { error: "Missing required fields" },
-//         { status: 400 }
-//       );
-//     }
-
-//     // --- 4. Validate ObjectId fields ---
-//     if (!mongoose.Types.ObjectId.isValid(problemId)) {
-//       return NextResponse.json(
-//         { error: "Invalid problemId format" },
-//         { status: 400 }
-//       );
-//     }
-
-//     // --- 5. Prevent duplicate submissions ---
-//     // Duplicate = same userId, problemId, code, language, status
-//     const existing = await Submission.findOne({
-//       userId: session.user.id,
-//       problemId,
-//       code,
-//       language,
-//       status,
-//     }).lean();
-
-//     if (existing ) {
-//       return NextResponse.json(
-//          existing,
-//         { status: 409 } // Conflict
-//       );
-//     }
-
-//     // --- 6. Create submission ---
-//     const newSubmission: SubmissionI = await Submission.create({
-//       userId: new mongoose.Types.ObjectId(session.user.id),
-//       problemId: new mongoose.Types.ObjectId(problemId),
-//       code,
-//       language,
-//       totalTestCases,
-//       passedTestCases,
-//       status,
-//       lastFailedTestCase,
-//       note,
-//     });
-
-//     return NextResponse.json(newSubmission, { status: 201 });
-
-//   } catch (error: unknown) {
-//     const message = error instanceof Error ? error.message : "Internal Server Error";
-//     console.error("POST /api/submissions Error:", error);
-
-//     return NextResponse.json(
-//       { error: "Failed to save submission", details: message },
-//       { status: 500 }
-//     );
-//   }
-// }
-
 export async function POST(req: NextRequest) {
   try {
     // 1) AUTHENTICATION
@@ -121,6 +35,7 @@ export async function POST(req: NextRequest) {
       totalTestCases = 0,
       passedTestCases = 0,
       status,
+      error,
       lastFailedTestCase = null,
       note = "",
     } = body;
@@ -161,6 +76,7 @@ export async function POST(req: NextRequest) {
       totalTestCases,
       passedTestCases,
       status,
+      error,
       lastFailedTestCase,
       note,
     });

@@ -10,6 +10,8 @@ import {
 import { useState } from "react";
 import { ExecutionResult, TabType, isCriticalError } from "./types";
 import { StarterCodeI } from "@/models/problem.model";
+import { useAppDispatch, useAppSelector } from "@/lib/redux/hooks";
+import { setCurrentCodeLanguageIS } from "@/lib/redux/features/submissionSlice";
 
 // --- 1. TOOLBAR ---
 interface ToolbarProps {
@@ -19,12 +21,20 @@ interface ToolbarProps {
   onSubmit: () => void;
   onReset: () => void;
   isRunning: boolean;
+  isSubmitting: boolean;
 }
 
-export function EditorToolbar({ language, setLanguage, onRun, onSubmit, onReset, isRunning }: ToolbarProps) {
+export function EditorToolbar({ language, setLanguage, onRun, onSubmit, onReset, isRunning,isSubmitting }: ToolbarProps) {
+  const dispatch = useAppDispatch();
+
+  const onLanguageChange = (lang: string) => {
+    dispatch(setCurrentCodeLanguageIS(lang));
+    setLanguage(lang);
+  };
+
   return (
     <div className="flex items-center justify-between p-3 border-b bg-card">
-      <Select value={language} onValueChange={setLanguage}>
+      <Select value={language} onValueChange={onLanguageChange}>
         <SelectTrigger className="w-[160px] h-8 bg-muted/50">
           <SelectValue placeholder="Language" />
         </SelectTrigger>
@@ -43,8 +53,8 @@ export function EditorToolbar({ language, setLanguage, onRun, onSubmit, onReset,
         <Button variant="secondary" size="sm" onClick={onRun} disabled={isRunning} className="h-8">
           {isRunning ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Play className="h-4 w-4 mr-2 fill-current" />} Run
         </Button>
-        <Button size="sm" onClick={onSubmit} disabled={isRunning} className="h-8 bg-green-600 hover:bg-green-700 text-white">
-          {isRunning ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />} Submit
+        <Button size="sm" onClick={onSubmit} disabled={isSubmitting} className="h-8 bg-green-600 hover:bg-green-700 text-white">
+          {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />} Submit
         </Button>
       </div>
     </div>
@@ -146,16 +156,15 @@ export function ExpandableCodeBlock({ code, language }: { code: string, language
 }
 
 // --- 5. TEST CASE DETAIL RENDERER ---
-export function TestCaseDetail({ result, inputs, paramNames }: { result: any, inputs: any, paramNames: string[] }) {
-  if (!result) return null;
-
+export function TestCaseDetail({inputs,output, expected,isPassed,error ,paramNames }: { inputs: any[]; output?: any; expected: any; isPassed: boolean;error?: any; paramNames: string[] }) {
+  if (!output && !error) return null;
   return (
     <div className="space-y-4 font-mono text-sm animate-in fade-in duration-300">
       {inputs && (
         <div className="grid gap-1">
           <span className="text-xs text-muted-foreground">Input</span>
           <div className="p-3 bg-muted/30 rounded-md border text-xs">
-            {inputs.input.map((inp: any, i: number) => (
+            {inputs.map((inp: any, i: number) => (
                <div key={i} className="mb-1 last:mb-0">
                   <span className="text-blue-500 mr-2">{paramNames[i]} =</span>
                   {JSON.stringify(inp)}
@@ -167,20 +176,20 @@ export function TestCaseDetail({ result, inputs, paramNames }: { result: any, in
       <div className="grid gap-4">
         <div className="space-y-1">
           <span className="text-xs text-muted-foreground">Output</span>
-          <div className={cn("p-3 rounded-md border text-xs overflow-auto", result.passed ? "bg-green-500/10 border-green-500/20 text-green-700" : "bg-red-500/10 border-red-500/20 text-red-700")}>
-            {JSON.stringify(result.output)}
+          <div className={cn("p-3 rounded-md border text-xs overflow-auto", isPassed ? "bg-green-500/10 border-green-500/20 text-green-700" : "bg-red-500/10 border-red-500/20 text-red-700")}>
+            {JSON.stringify(output)}
           </div>
         </div>
         <div className="space-y-1">
           <span className="text-xs text-muted-foreground">Expected</span>
           <div className="p-3 bg-muted/30 border text-muted-foreground rounded-md text-xs overflow-auto">
-            {JSON.stringify(result.expected)}
+            {JSON.stringify(expected)}
           </div>
         </div>
       </div>
-      {result.error && (
+      {error && (
           <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-md text-red-600 text-xs">
-            {result.error}
+            {error}
           </div>
       )}
     </div>

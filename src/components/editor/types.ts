@@ -1,8 +1,27 @@
 import { TestCaseI } from "@/models/testcase.model";
 import { SubmissionI } from "@/models/submission.model";
 
-export type ExecutionStatus = "ACCEPTED" | "WRONG_ANSWER" | "COMPILE_ERROR" | "RUNTIME_ERROR" | "TLE" | "INTERNAL_ERROR";
+export type ExecutionStatus =
+  | "ACCEPTED"
+  | "WRONG_ANSWER"
+  | "COMPILE_ERROR"
+  | "RUNTIME_ERROR"
+  | "TLE"
+  | "INTERNAL_ERROR";
 export type TabType = "testcase" | "result" | "submission";
+
+interface SubmissionTabProps {
+  status: ExecutionStatus;
+  submission: SubmissionI;
+  testCases: TestCaseI[];
+  passedTestCases: number;
+  totalTestCases: number;
+  error?: string;
+  lastFailedTestCase: TestCaseI | null;
+  code: string;
+  language: string;
+  paramNames: string[];
+}
 
 export interface ExecutionResult {
   status: ExecutionStatus;
@@ -23,5 +42,7 @@ export interface ExecutionResult {
 }
 
 export const isCriticalError = (status?: ExecutionStatus) => {
-  return ["COMPILE_ERROR", "RUNTIME_ERROR", "TLE", "INTERNAL_ERROR"].includes(status || "");
+  return ["COMPILE_ERROR", "RUNTIME_ERROR", "TLE", "INTERNAL_ERROR"].includes(
+    status || ""
+  );
 };
