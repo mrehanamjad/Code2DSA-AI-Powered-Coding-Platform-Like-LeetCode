@@ -101,16 +101,16 @@ export default function RecentActivity({userId}:{userId:string}) {
   // const [currentPage, setCurrentPage] = useState(0)
   const [activeTab, setActiveTab] = useState<'recent' | 'list' | 'challenges'>('recent')
 
-  const getTabData = () => {
-    switch (activeTab) {
-      case 'list':
-        return myList
-      case 'challenges':
-        return challenges
-      default:
-        return activities
-    }
-  }
+  // const getTabData = () => {
+  //   switch (activeTab) {
+  //     case 'list':
+  //       return myList
+  //     case 'challenges':
+  //       return challenges
+  //     default:
+  //       return activities
+  //   }
+  // }
 
   // const currentData = getTabData()
 

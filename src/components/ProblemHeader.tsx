@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Code2, Timer, Play, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import Logo from "./Logo";
 
 export const ProblemHeader = memo(function ProblemHeader() {
   const router = useRouter();
@@ -42,10 +43,9 @@ export const ProblemHeader = memo(function ProblemHeader() {
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <Code2 className="h-6 w-6 text-primary" />
-        <h1 className="text-lg sm:text-xl font-bold text-foreground hidden sm:block">
-          CodeMaster
-        </h1>
+        
+        <Logo href="#" />
+
       </div>
 
       <div className="flex items-center gap-2 sm:gap-4">

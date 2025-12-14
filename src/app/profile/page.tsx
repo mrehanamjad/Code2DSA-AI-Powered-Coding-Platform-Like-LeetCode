@@ -8,9 +8,9 @@ import { AvatarSection } from "@/components/settingsComp/AvatarSection";
 import { EditFieldModal } from "@/components/settingsComp/EditFieldModal";
 import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 import { Types } from "mongoose";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 // The Type provided in your prompt
 export type PublicUser = {
@@ -51,11 +51,7 @@ const Settings = () => {
           setUser(data.data); 
         } catch (error) {
           console.error(error);
-          toast({
-            title: "Error",
-            description: "Could not load profile data",
-            variant: "destructive",
-          });
+          toast.error("Failed to fetch user data")
         } finally {
           setLoading(false);
         }

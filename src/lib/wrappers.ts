@@ -51,7 +51,7 @@ export const PythonWrapper = (
   testCases: Array<{ input: unknown[]; expected: unknown }>
 ) => {
   // Helper function to convert JS values to Python values
-  const toPythonValue = (value: any): string => {
+  const toPythonValue = (value: unknown): string => {
     if (value === null) return "None";
     if (value === true) return "True";
     if (value === false) return "False";

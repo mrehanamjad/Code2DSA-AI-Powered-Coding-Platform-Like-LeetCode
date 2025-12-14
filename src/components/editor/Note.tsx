@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2,  Save } from "lucide-react";
+import { Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/apiClient/apiClient";
 import { SubmissionForProblemI } from "@/lib/apiClient/types";
@@ -15,7 +15,9 @@ function Note({
   submissionId: string;
   savedNote: string;
   closeNoteModal?: () => void;
-  setSubmissions?: (value: React.SetStateAction<SubmissionForProblemI[]>) => void;
+  setSubmissions?: (
+    value: React.SetStateAction<SubmissionForProblemI[]>
+  ) => void;
 }) {
   const [note, setNote] = useState(savedNote || "");
   const [isSaving, setIsSaving] = useState(false);
@@ -26,14 +28,13 @@ function Note({
 
     if (res.success) {
       toast.success("Note Saved");
-      setSubmissions && setSubmissions((prev) =>
+      setSubmissions?.((prev) =>
         prev.map((sub) =>
-          sub._id.toString() === submissionId
-            ? { ...sub, note }
-            : sub
+          sub._id.toString() === submissionId ? { ...sub, note } : sub
         )
-      )
-      closeNoteModal && closeNoteModal();
+      );
+
+      closeNoteModal?.();
     } else {
       toast.error("Failed to save note");
     }
@@ -46,40 +47,40 @@ function Note({
   };
 
   return (
-      <div className="flex flex-col gap-2">
-        <Textarea
-          placeholder="Add a note (e.g., Time complexity O(n))..."
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          className="min-h-[80px] text-sm resize-none bg-muted/20 focus:bg-background"
-        />
-        <div className="flex justify-end gap-2 mt-1.5">
-          {closeNoteModal && (
-            <Button
-                // size="sm"
-                variant={"ghost"}
-                disabled={isSaving}
-              onClick={() => closeNoteModal()}
-              className="px-4 py-2 text-sm font-medium rounded-md hover:bg-muted transition-colors"
-            >
-              Cancel
-            </Button>
-          )}
+    <div className="flex flex-col gap-2">
+      <Textarea
+        placeholder="Add a note (e.g., Time complexity O(n))..."
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        className="min-h-[80px] text-sm resize-none bg-muted/20 focus:bg-background"
+      />
+      <div className="flex justify-end gap-2 mt-1.5">
+        {closeNoteModal && (
           <Button
-            size="sm"
-            onClick={handleSave}
+            // size="sm"
+            variant={"ghost"}
             disabled={isSaving}
-            className="h-8"
+            onClick={() => closeNoteModal()}
+            className="px-4 py-2 text-sm font-medium rounded-md hover:bg-muted transition-colors"
           >
-            {isSaving ? (
-              <Loader2 className="h-3 w-3 animate-spin mr-2" />
-            ) : (
-              <Save className="h-3 w-3 mr-2" />
-            )}{" "}
-            Save Note
+            Cancel
           </Button>
-        </div>
+        )}
+        <Button
+          size="sm"
+          onClick={handleSave}
+          disabled={isSaving}
+          className="h-8"
+        >
+          {isSaving ? (
+            <Loader2 className="h-3 w-3 animate-spin mr-2" />
+          ) : (
+            <Save className="h-3 w-3 mr-2" />
+          )}{" "}
+          Save Note
+        </Button>
       </div>
+    </div>
   );
 }
 

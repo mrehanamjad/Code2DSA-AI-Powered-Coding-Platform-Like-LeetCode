@@ -81,7 +81,7 @@ export async function GET(req: NextRequest) {
     // 5. Execute Aggregation with Pagination
     const myAggregate = Submission.aggregate(pipeline);
 
-    // @ts-expect-error
+    // @ts-expect-error - to ignore error: 'Submission.aggregatePaginate' is of type 'unknown'.ts(18046)
     const results = await Submission.aggregatePaginate(myAggregate, {
       page,
       limit,

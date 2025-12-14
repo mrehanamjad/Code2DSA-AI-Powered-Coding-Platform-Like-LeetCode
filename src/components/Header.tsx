@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Code2, User, Menu, X, LogOut, Settings, Loader2 } from "lucide-react";
+import {  User, Menu, X, LogOut, Settings, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./ThemeToggle";
 import Link from "next/link";
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { usePathname, useRouter } from "next/navigation";
 import Container from "./Container";
+import Logo from "./Logo";
 
 const Header = () => {
   const pathname = usePathname();
@@ -34,13 +35,7 @@ const Header = () => {
       <Container>
         <div className=" flex h-16 items-center justify-between px-4">
           {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2 transition-smooth hover:opacity-80"
-          >
-            <Code2 className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold tracking-tight">CodeArena</span>
-          </Link>
+         <Logo />
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">

@@ -33,7 +33,7 @@ class ApiClient {
       });
 
       const status = res.status;
-
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let json: any = null;
       try {
         json = await res.json();

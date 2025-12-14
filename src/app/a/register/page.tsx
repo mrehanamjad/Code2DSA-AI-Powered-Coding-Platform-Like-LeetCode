@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import registerationSchema from "@/schemas/register.schema"; 
+import Logo from "@/components/Logo";
 
 const Signup = () => {
   const router = useRouter();
@@ -82,9 +83,7 @@ const Signup = () => {
               {/*  Header */}
               <div className="mb-8">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-primary text-3xl font-bold terminal-glow-text">
-                    codeVerse_
-                  </span>
+                  <Logo size="2xl" href="#" />
                   <span className="text-primary text-3xl animate-cursor-blink">|</span>
                 </div>
                 <p className="text-muted-foreground text-sm">

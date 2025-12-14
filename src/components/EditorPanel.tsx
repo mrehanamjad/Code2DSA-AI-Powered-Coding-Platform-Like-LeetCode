@@ -49,7 +49,9 @@ const languageMap: Record<string, string> = {
   java: "java",
   cpp: "cpp",
 };
-const wrapperMap: Record<string, Function> = {
+
+
+const wrapperMap: Record<string, (userCode: string, functionName: string, testCases: {input: unknown[];expected: unknown;}[]) => string> = {
   javascript: JavaScriptWrapper,
   python: PythonWrapper,
   java: JavaWrapper,
@@ -104,7 +106,7 @@ export function EditorPanel({
       setCode(savedCode || problem.starterCode[language] || "");
     }
     setLanguage(languageIS as keyof StarterCodeI);
-  }, [problem?._id, language, problem?.starterCode, languageIS]);
+  }, [problem?._id, language, problem?.starterCode, languageIS,problem]);
 
   const handleRunOrSubmit = async (type: "run" | "submit") => {
     if (!problem) return;

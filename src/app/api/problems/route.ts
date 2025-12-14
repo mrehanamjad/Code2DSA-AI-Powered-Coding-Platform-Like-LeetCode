@@ -211,7 +211,7 @@ export async function GET(req: NextRequest) {
     // Execute
     const myAggregate = Problem.aggregate(pipeline);
 
-    // @ts-expect-error
+    // @ts-expect-error - to ignore error: 'Problem.aggregatePaginate' is of type 'unknown'.ts(18046)
     const result = await Problem.aggregatePaginate(myAggregate, options);
 
     return NextResponse.json(result, { status: 200 });

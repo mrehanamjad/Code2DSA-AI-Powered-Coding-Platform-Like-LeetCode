@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import loginSchema from "@/schemas/login.schema";
+import Logo from "@/components/Logo";
 
 const Login = () => {
   const router = useRouter();
@@ -54,9 +55,7 @@ const Login = () => {
               {/* Header */}
               <div className="mb-8">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-primary text-3xl font-bold terminal-glow-text">
-                    codeVerse_
-                  </span>
+                    <Logo size="2xl" href="#" />
                   <span className="text-primary text-3xl animate-cursor-blink">
                     |
                   </span>

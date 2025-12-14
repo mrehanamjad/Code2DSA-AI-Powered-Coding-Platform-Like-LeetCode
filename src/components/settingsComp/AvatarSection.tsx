@@ -8,8 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { toast } from "@/hooks/use-toast";
 import Image from "next/image";
+import { toast } from "sonner";
 
 interface Avatar {
     id: string;
@@ -31,11 +31,11 @@ export function AvatarSection({ avatar, onAvatarChange }: AvatarSectionProps) {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: "File too large",
+
+        toast.warning("File too large",{
           description: "Please select an image under 5MB.",
-          variant: "destructive",
-        });
+        })
+        
         return;
       }
       const reader = new FileReader();
@@ -67,17 +67,14 @@ export function AvatarSection({ avatar, onAvatarChange }: AvatarSectionProps) {
 
       onAvatarChange(mockNewAvatar);
       
-      toast({
-        title: "Avatar updated",
-        description: "Your profile picture has been updated successfully.",
+      toast.success("Profile picture updated",{
+        description: "Your profile picture has been updated.",
       });
       setIsOpen(false);
       setPreviewUrl(null);
     } catch (error) {
-      toast({
-         title: "Error",
-         description: "Failed to upload image",
-         variant: "destructive"
+      toast.error("Failed to update profile picture",{
+        description: "Something went wrong. Please try again.",
       });
       console.log(error)
     } finally {
