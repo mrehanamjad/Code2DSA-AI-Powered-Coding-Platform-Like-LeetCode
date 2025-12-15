@@ -96,7 +96,7 @@ function ProblemPage() {
       {isMobile ? (
         <div className="flex-1 min-h-0 flex flex-col">
           <div className="flex border-b border-border bg-background z-10">
-            {(["problem", "editor", "chat"] as const).map((tab) => (
+            {(["problem", "editor"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}

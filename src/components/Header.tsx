@@ -35,8 +35,8 @@ const Header = () => {
   const { data: session, status } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
-  if (pathname.split("/").length > 2 && pathname.includes("problems/")) {
+  
+  if (pathname.split("/").length > 2 && pathname.includes("problems/") ) {
     return null;
   }
 
@@ -62,10 +62,10 @@ const Header = () => {
               Problems
             </Link>
             <Link
-              href={`/u/${session?.user?.username}`}
+              href={`/code`}
               className="text-sm font-medium transition-smooth hover:text-primary"
             >
-              Profile
+              Editor
             </Link>
           </nav>
 
@@ -216,12 +216,12 @@ const Header = () => {
         </Link>
         
         <Link
-          href={`/u/${session?.user?.username}`}
+          href={"/code"}
           onClick={() => setIsMenuOpen(false)}
           className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
         >
           <User className="h-5 w-5" />
-          <span>Profile</span>
+          <span>Editor</span>
         </Link>
       </div>
 
