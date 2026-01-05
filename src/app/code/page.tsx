@@ -116,7 +116,7 @@ export const executeCode = async (language: string, sourceCode: string, stdin: s
 export default function CodeCompiler() {
   // --- State ---
   const [language, setLanguage] = useState(LANGUAGES[0]);
-  const [code, setCode] = useState(BOILERPLATES.javascript); // Default JS boilerplate
+  const [code, setCode] = useState(BOILERPLATES.javascript); 
   const [theme, setTheme] = useState("vs-dark");
   const [fontSize, setFontSize] = useState(14);
   const [minimap, setMinimap] = useState(false);

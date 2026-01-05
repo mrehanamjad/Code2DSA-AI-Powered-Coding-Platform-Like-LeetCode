@@ -89,7 +89,6 @@ export function EditorPanel({
 }: EditorPanelProps) {
   // Initialize state with a default or the redux state immediately to prevent flicker
   const languageIS = useAppSelector((state) => state?.code.currentCodeLanguage);
-  console.log("rerender")
   const [language, setLanguage] = useState<keyof StarterCodeI>(
     (languageIS as keyof StarterCodeI) || "javascript"
   );
@@ -127,7 +126,6 @@ export function EditorPanel({
   }, [problem, language]); // Dependency array is now clean
 
   const handleRunOrSubmit = async (type: "run" | "submit") => {
-    console.log("i am in handleRunOrSubmit and type =",type)
     if (!problem) return;
     if (problem?.starterCode?.[language] === code) {
       toast.error(
@@ -184,14 +182,15 @@ export function EditorPanel({
       let errorDetails = "";
       const parsedResults: {testNumber: number, passed: boolean, output?: unknown, expected?: unknown, error?: string}[] = [];
       let dbSubmissionId = "";
-
-      if (result.compile && result.compile.code !== 0) {
+      if (result.compile && result.compile.stderr && result.compile.code !== 0) {
         status = "COMPILE_ERROR";
         errorDetails = result.compile.stderr || result.compile.output;
-      } else if (result.run && result.run.signal === "SIGKILL") {
+      } 
+      else if (result.run && result.run.stdout?.lenghth === 0 &&result.run.signal === "SIGKILL") {
         status = "TLE";
         errorDetails = "Time Limit Exceeded";
-      } else if (result.run && result.run.code !== 0) {
+      } 
+      else if (result.run && result.run.stderr && result.run.code !== 0) {
         status = "RUNTIME_ERROR";
         errorDetails = result.run.stderr || result.run.output;
       } else if (result.run) {
@@ -245,7 +244,6 @@ export function EditorPanel({
       // --- Submission Logic ---
       if (type === "submit") {
         const lastFailed = parsedResults.find((r) => !r.passed);
-        console.log("problemId",problem._id,"userId",userId,"code",code,"language",language,"totalTestCases",cleanTestCases.length,"passedTestCases",parsedResults.filter((r) => r.passed).length,"status",mapStatusToDb(status),"error",errorDetails)
         const submissionPayload: Partial<SubmissionI> = {
           problemId: problem._id as mongoose.Types.ObjectId,
           userId: new mongoose.Types.ObjectId(userId || ""),
@@ -285,8 +283,6 @@ export function EditorPanel({
         testCasesWithInputs: testCasesToRun,
       } as ExecutionResult;
       
-      console.log("Data to set",dataToSet)
-
       if (type === "submit") setSubmitOutput(dataToSet);
       else setRunOutput(dataToSet);
       

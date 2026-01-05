@@ -67,7 +67,6 @@ export default async function ProblemsPage({ searchParams }: PageProps) {
         Loading...
       </div>
     );
-  console.log(data);
 
   return (
     <div className="min-h-screen bg-background">
