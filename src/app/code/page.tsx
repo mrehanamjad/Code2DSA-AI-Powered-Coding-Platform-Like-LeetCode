@@ -14,7 +14,7 @@ import {
   PanelLeftOpen,
   Loader2,
   Command,
-  Info
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,11 +40,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 // --- Configuration ---
 
@@ -61,15 +57,60 @@ const BOILERPLATES = {
 };
 
 const LANGUAGES = [
-  { id: "javascript", name: "JavaScript", version: "18.15.0", icon: "devicon-javascript-plain colored" },
-  { id: "typescript", name: "TypeScript", version: "5.0.3", icon: "devicon-typescript-plain colored" },
-  { id: "python", name: "Python", version: "3.10.0", icon: "devicon-python-plain colored" },
-  { id: "java", name: "Java", version: "15.0.2", icon: "devicon-java-plain colored" },
-  { id: "cpp", name: "C++ (GCC)", version: "10.2.0", icon: "devicon-cplusplus-plain colored" },
-  { id: "csharp", name: "C#", version: "6.12.0", icon: "devicon-csharp-plain colored" },
-  { id: "go", name: "Go", version: "1.16.2", icon: "devicon-go-original-wordmark colored" },
-  { id: "rust", name: "Rust", version: "1.68.2", icon: "devicon-rust-plain text-white" }, // Rust icon usually needs white in dark mode
-  { id: "php", name: "PHP", version: "8.2.3", icon: "devicon-php-plain colored" },
+  {
+    id: "javascript",
+    name: "JavaScript",
+    version: "18.15.0",
+    icon: "devicon-javascript-plain colored",
+  },
+  {
+    id: "typescript",
+    name: "TypeScript",
+    version: "5.0.3",
+    icon: "devicon-typescript-plain colored",
+  },
+  {
+    id: "python",
+    name: "Python",
+    version: "3.10.0",
+    icon: "devicon-python-plain colored",
+  },
+  {
+    id: "java",
+    name: "Java",
+    version: "15.0.2",
+    icon: "devicon-java-plain colored",
+  },
+  {
+    id: "cpp",
+    name: "C++ (GCC)",
+    version: "10.2.0",
+    icon: "devicon-cplusplus-plain colored",
+  },
+  {
+    id: "csharp",
+    name: "C#",
+    version: "6.12.0",
+    icon: "devicon-csharp-plain colored",
+  },
+  {
+    id: "go",
+    name: "Go",
+    version: "1.16.2",
+    icon: "devicon-go-original-wordmark colored",
+  },
+  {
+    id: "rust",
+    name: "Rust",
+    version: "1.68.2",
+    icon: "devicon-rust-plain text-white",
+  }, // Rust icon usually needs white in dark mode
+  {
+    id: "php",
+    name: "PHP",
+    version: "8.2.3",
+    icon: "devicon-php-plain colored",
+  },
 ];
 
 const THEMES = [
@@ -90,9 +131,13 @@ export const LANGUAGE_VERSIONS: Record<string, string> = {
   rust: "1.68.2",
 };
 
-export const executeCode = async (language: string, sourceCode: string, stdin: string = "") => {
+export const executeCode = async (
+  language: string,
+  sourceCode: string,
+  stdin: string = ""
+) => {
   const version = LANGUAGE_VERSIONS[language] || "*";
-  
+
   try {
     const response = await fetch("https://emkc.org/api/v2/piston/execute", {
       method: "POST",
@@ -116,7 +161,7 @@ export const executeCode = async (language: string, sourceCode: string, stdin: s
 export default function CodeCompiler() {
   // --- State ---
   const [language, setLanguage] = useState(LANGUAGES[0]);
-  const [code, setCode] = useState(BOILERPLATES.javascript); 
+  const [code, setCode] = useState<Record<string, string>>(BOILERPLATES);
   const [theme, setTheme] = useState("vs-dark");
   const [fontSize, setFontSize] = useState(14);
   const [minimap, setMinimap] = useState(false);
@@ -139,8 +184,11 @@ export default function CodeCompiler() {
     const selectedLang = LANGUAGES.find((l) => l.id === langId);
     if (selectedLang) {
       setLanguage(selectedLang);
-      // @ts-expect-error there can be a ts error
-      setCode(BOILERPLATES[langId] || "// Code here");
+      setCode((prev) => ({
+        ...prev,
+        [langId]:
+          prev[langId] || BOILERPLATES[langId as keyof typeof BOILERPLATES],
+      }));
     }
   };
 
@@ -153,7 +201,11 @@ export default function CodeCompiler() {
     const startTime = performance.now();
 
     try {
-      const result = await executeCode(language.id, code, stdInput);
+      const result = await executeCode(
+        language.id,
+        code[language.id],
+        stdInput
+      );
       const endTime = performance.now();
       setExecutionTime(((endTime - startTime) / 1000).toFixed(2));
 
@@ -165,7 +217,7 @@ export default function CodeCompiler() {
         setIsError(true);
       }
     } catch (error) {
-        console.log(error)
+      console.log(error);
       setOutput("Network Error: Failed to connect to compiler service.");
       setIsError(true);
     } finally {
@@ -191,10 +243,15 @@ export default function CodeCompiler() {
           )}
         >
           {/* DevIcon Icon */}
-          <i className={cn(lang.icon, "text-lg transition-transform group-hover:scale-110")}></i>
-          
+          <i
+            className={cn(
+              lang.icon,
+              "text-lg transition-transform group-hover:scale-110"
+            )}
+          ></i>
+
           <span className="flex-1 text-left">{lang.name}</span>
-          
+
           {language.id === lang.id && (
             <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary))] animate-pulse" />
           )}
@@ -205,34 +262,41 @@ export default function CodeCompiler() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-2rem)] w-full max-w-[1600px] mx-auto border rounded-xl overflow-hidden shadow-2xl bg-background">
-      
       {/* 1. Header */}
       <header className="h-14 border-b flex items-center justify-between px-4 bg-muted/20 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
         <div className="flex items-center gap-4">
           <Separator orientation="vertical" className="h-6 hidden md:block" />
-          
+
           {/* Active Language Display (Mobile/Desktop) */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-             <i className={cn(language.icon, "text-lg")}></i>
-             <span className="font-mono text-xs hidden sm:inline">{language.version}</span>
+            <i className={cn(language.icon, "text-lg")}></i>
+            <span className="font-mono text-xs hidden sm:inline">
+              {language.version}
+            </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">            
+        <div className="flex items-center gap-2">
           {/* Settings Menu */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 text-muted-foreground hover:text-foreground"
+              >
                 <Settings2 className="h-5 w-5" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80 p-5 mr-4" align="end">
               <div className="space-y-5">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium leading-none">Editor Preferences</h4>
+                  <h4 className="font-medium leading-none">
+                    Editor Preferences
+                  </h4>
                 </div>
                 <Separator />
-                
+
                 <div className="grid gap-4">
                   <div className="grid gap-2">
                     <Label>Theme</Label>
@@ -244,7 +308,11 @@ export default function CodeCompiler() {
                         {THEMES.map((t) => (
                           <SelectItem key={t.id} value={t.id}>
                             <div className="flex items-center gap-2">
-                              {t.id.includes("dark") ? <Moon className="h-3 w-3" /> : <Sun className="h-3 w-3" />}
+                              {t.id.includes("dark") ? (
+                                <Moon className="h-3 w-3" />
+                              ) : (
+                                <Sun className="h-3 w-3" />
+                              )}
                               {t.name}
                             </div>
                           </SelectItem>
@@ -256,7 +324,9 @@ export default function CodeCompiler() {
                   <div className="grid gap-2">
                     <div className="flex items-center justify-between">
                       <Label>Font Size</Label>
-                      <span className="text-xs text-muted-foreground font-mono">{fontSize}px</span>
+                      <span className="text-xs text-muted-foreground font-mono">
+                        {fontSize}px
+                      </span>
                     </div>
                     <Slider
                       value={[fontSize]}
@@ -269,11 +339,18 @@ export default function CodeCompiler() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <Label className="flex items-center gap-2 cursor-pointer" htmlFor="minimap">
+                    <Label
+                      className="flex items-center gap-2 cursor-pointer"
+                      htmlFor="minimap"
+                    >
                       <Monitor className="h-4 w-4 text-muted-foreground" />
                       Minimap
                     </Label>
-                    <Switch id="minimap" checked={minimap} onCheckedChange={setMinimap} />
+                    <Switch
+                      id="minimap"
+                      checked={minimap}
+                      onCheckedChange={setMinimap}
+                    />
                   </div>
                 </div>
               </div>
@@ -313,49 +390,58 @@ export default function CodeCompiler() {
 
       {/* 2. Main Workspace */}
       <div className="flex-1 flex overflow-hidden">
-        
         {/* LEFT: Language Sidebar (Desktop Only) */}
-        <div 
+        <div
           className={cn(
             "hidden lg:flex flex-col border-r bg-muted/10 transition-all duration-300",
             sidebarOpen ? "w-64" : "w-16 items-center"
           )}
         >
           <div className="flex items-center justify-between p-2 h-10 border-b w-full">
-            {sidebarOpen && <span className="text-xs font-semibold px-2 uppercase text-muted-foreground">Explorer</span>}
-            <Button 
-                variant="ghost" 
-                size="icon" 
-                className={cn("h-6 w-6", sidebarOpen ? "ml-auto" : "")}
-                onClick={() => setSidebarOpen(!sidebarOpen)}
+            {sidebarOpen && (
+              <span className="text-xs font-semibold px-2 uppercase text-muted-foreground">
+                Explorer
+              </span>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn("h-6 w-6", sidebarOpen ? "ml-auto" : "")}
+              onClick={() => setSidebarOpen(!sidebarOpen)}
             >
-                {sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
+              {sidebarOpen ? (
+                <PanelLeftClose className="h-4 w-4" />
+              ) : (
+                <PanelLeftOpen className="h-4 w-4" />
+              )}
             </Button>
           </div>
 
           <ScrollArea className="flex-1 w-full">
             {sidebarOpen ? (
-                <LanguageList />
+              <LanguageList />
             ) : (
-                 <div className="flex flex-col items-center gap-4 py-4">
-                    {LANGUAGES.map(lang => (
-                        <div key={lang.id} className="relative group">
-                            <button
-                                onClick={() => handleLanguageChange(lang.id)}
-                                className={cn(
-                                    "p-2 rounded-md transition-colors",
-                                    language.id === lang.id ? "bg-primary/10" : "text-muted-foreground hover:text-foreground"
-                                )}
-                            >
-                                <i className={cn(lang.icon, "text-xl")}></i>
-                            </button>
-                            {/* Tooltip for collapsed state */}
-                            <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded shadow-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50">
-                                {lang.name}
-                            </div>
-                        </div>
-                    ))}
-                 </div>
+              <div className="flex flex-col items-center gap-4 py-4">
+                {LANGUAGES.map((lang) => (
+                  <div key={lang.id} className="relative group">
+                    <button
+                      onClick={() => handleLanguageChange(lang.id)}
+                      className={cn(
+                        "p-2 rounded-md transition-colors",
+                        language.id === lang.id
+                          ? "bg-primary/10"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      <i className={cn(lang.icon, "text-xl")}></i>
+                    </button>
+                    {/* Tooltip for collapsed state */}
+                    <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded shadow-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50">
+                      {lang.name}
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </ScrollArea>
         </div>
@@ -363,16 +449,17 @@ export default function CodeCompiler() {
         {/* RIGHT: Editor & Console Split */}
         <div className="flex-1 flex flex-col min-w-0">
           <ResizablePanelGroup direction="vertical" className="h-full">
-            
             {/* Top: Editor */}
             <ResizablePanel defaultSize={70} minSize={30}>
               <div className="h-full relative bg-editor-bg">
                 <Editor
                   height="100%"
                   language={language.id === "csharp" ? "csharp" : language.id}
-                  value={code}
+                  value={code[language.id]}
                   theme={theme}
-                  onChange={(val) => setCode(val || "")}
+                  onChange={(val) =>
+                    setCode((prev) => ({ ...prev, [language.id]: val ?? "" }))
+                  }
                   onMount={handleEditorDidMount}
                   options={{
                     minimap: { enabled: minimap },
@@ -413,8 +500,8 @@ export default function CodeCompiler() {
                     size="icon"
                     className="h-6 w-6 text-zinc-500 hover:text-zinc-100 hover:bg-zinc-800"
                     onClick={() => {
-                        setOutput(null); 
-                        setIsError(false);
+                      setOutput(null);
+                      setIsError(false);
                     }}
                     title="Clear Console"
                   >
@@ -424,19 +511,19 @@ export default function CodeCompiler() {
 
                 {/* Console Body: Split View */}
                 <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-                  
                   {/* Left: Input */}
                   <div className="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-zinc-800 relative bg-zinc-900/30">
-                     
-                     {/* Input Hint */}
-                     <div className="flex items-center justify-between px-3 py-1.5 border-b border-zinc-800/50 bg-zinc-900/50">
-                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Input</span>
-                        <div className="flex items-center gap-1.5 text-[10px] text-zinc-600">
-                            <Info className="h-3 w-3" />
-                            <span>Split multiple inputs with new lines</span>
-                        </div>
-                     </div>
-                     
+                    {/* Input Hint */}
+                    <div className="flex items-center justify-between px-3 py-1.5 border-b border-zinc-800/50 bg-zinc-900/50">
+                      <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+                        Input
+                      </span>
+                      <div className="flex items-center gap-1.5 text-[10px] text-zinc-600">
+                        <Info className="h-3 w-3" />
+                        <span>Split multiple inputs with new lines</span>
+                      </div>
+                    </div>
+
                     <textarea
                       className="flex-1 w-full bg-transparent p-3 font-mono text-sm resize-none focus:outline-none placeholder:text-zinc-700 text-zinc-300"
                       placeholder="Split multiple inputs with new lines"
@@ -448,40 +535,52 @@ export default function CodeCompiler() {
 
                   {/* Right: Output */}
                   <div className="flex-[1.5] flex flex-col relative bg-zinc-950">
-                     <div className="flex items-center justify-between px-3 py-1.5 border-b border-zinc-800/50 bg-zinc-900/50">
-                        <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Output</span>
-                     </div>
-                     
-                     <div className="flex-1 p-3 font-mono text-sm overflow-auto">
-                        {!output && !isError && (
-                            <div className="h-full flex flex-col items-center justify-center text-zinc-800">
-                                <Command className="h-6 w-6 mb-2 opacity-20" />
-                                <p className="text-xs opacity-50">Run code to see output</p>
-                            </div>
-                        )}
-                        <div className={cn("whitespace-pre-wrap break-all", isError ? "text-red-400" : "text-green-400")}>
-                            {output}
+                    <div className="flex items-center justify-between px-3 py-1.5 border-b border-zinc-800/50 bg-zinc-900/50">
+                      <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+                        Output
+                      </span>
+                    </div>
+
+                    <div className="flex-1 p-3 font-mono text-sm overflow-auto">
+                      {!output && !isError && (
+                        <div className="h-full flex flex-col items-center justify-center text-zinc-800">
+                          <Command className="h-6 w-6 mb-2 opacity-20" />
+                          <p className="text-xs opacity-50">
+                            Run code to see output
+                          </p>
                         </div>
-                     </div>
+                      )}
+                      <div
+                        className={cn(
+                          "whitespace-pre-wrap break-all",
+                          isError ? "text-red-400" : "text-green-400"
+                        )}
+                      >
+                        {output}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </ResizablePanel>
-
           </ResizablePanelGroup>
         </div>
-
       </div>
 
       {/* Footer Status Bar */}
       <div className="h-6 bg-primary/5 border-t flex items-center justify-between px-3 text-[10px] text-muted-foreground select-none">
         <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5">
-                <div className={cn("h-1.5 w-1.5 rounded-full", isRunning ? "bg-yellow-500 animate-pulse" : "bg-green-500")} />
-                {isRunning ? "Compiling..." : "Ready"}
-            </span>
+          <span className="flex items-center gap-1.5">
+            <div
+              className={cn(
+                "h-1.5 w-1.5 rounded-full",
+                isRunning ? "bg-yellow-500 animate-pulse" : "bg-green-500"
+              )}
+            />
+            {isRunning ? "Compiling..." : "Ready"}
+          </span>
         </div>
-        <span>Ln {code.split('\n').length}, Col 1</span>
+        <span>Ln {code[language.id].split("\n").length}, Col 1</span>
       </div>
     </div>
   );
