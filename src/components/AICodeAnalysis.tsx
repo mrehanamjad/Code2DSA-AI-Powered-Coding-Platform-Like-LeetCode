@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { apiClient } from "@/lib/apiClient/apiClient";
 import {
-  Loader2, Bug, Zap, Clock, Database, X, Sparkles, CheckCircle2, Terminal
+  Loader2, Bug, Zap, Clock, Database, X, Sparkles, CheckCircle2, Terminal,
+  LucideProps
 } from "lucide-react";
 import { toast } from "sonner";
 import { AICodeAnalyzerResposeI } from "@/lib/apiClient/types";
@@ -239,7 +240,9 @@ export default function AICodeAnalysisModal({
   );
 }
 
-function EmptyState({ icon: Icon, color, title, description }: { icon: any , color: string, title: string, description: string }) {
+type LucideIconType = React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>
+
+function EmptyState({ icon: Icon, color, title, description }: { icon: LucideIconType , color: string, title: string, description: string }) {
     return (
         <div className="h-full min-h-[120px] flex flex-col items-center justify-center text-center p-4">
         <Icon className={`h-10 w-10 ${color} mb-3 opacity-80`} />
