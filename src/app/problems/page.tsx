@@ -56,7 +56,6 @@ interface PageProps {
 }
 
 export default async function ProblemsPage({ searchParams }: PageProps) {
-  // 1. Await params in Next.js 15
   const params = await searchParams;
 
   // 2. Fetch data server-side
