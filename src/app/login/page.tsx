@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { TerminalInput } from "@/components/AuthComponents/TerminalInput";
 import Link from "next/link";
@@ -15,103 +16,112 @@ const Login = () => {
     email: "",
     password: "",
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const validation = loginSchema.safeParse(formData);
+
     if (!validation.success) {
       const firstError = validation.error.issues[0];
       toast.error(firstError.message);
       return;
     }
-    
-    setIsSubmitting(true);
-    const result = await signIn("credentials", {
-      email: formData.email,
-      password: formData.password,
-      redirect: false,
-    });
-    
-    setIsSubmitting(true);
-    if (result?.ok) {
-      router.push("/");
-    } else {
-      toast.error("Failed to login user");
 
-      // setIsSubmitting(false);
+    try {
+      setIsSubmitting(true);
+
+      const result = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      });
+
+      if (result?.ok) {
+        toast.success("Login successful 🚀");
+        router.push("/");
+      } else {
+        toast.error("Invalid email or password");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   return (
-    <div 
-     className="min-h-screen   text-foreground font-mono transition-colors duration-300">
-
+    <div className="min-h-screen text-foreground font-mono transition-colors duration-300">
       <div className="container mx-auto px-4 py-8 lg:py-12">
-        <div className=" lg:gap-12 h-full pt-18 max-sm:pt-10">
+        <div className="lg:gap-12 h-full pt-18 max-sm:pt-10">
           <div className="order-2 lg:order-1 animate-fade-in">
             <div className="max-w-md mx-auto">
+
               {/* Header */}
               <div className="mb-8">
                 <div className="flex items-center gap-2 mb-2">
-                    <Logo size="2xl" href="#" />
+                  <Logo size="2xl" href="#" />
                   <span className="text-primary text-3xl animate-cursor-blink">
                     |
                   </span>
                 </div>
+
                 <p className="text-muted-foreground text-sm">
                   &gt; Authenticate user credentials
                 </p>
               </div>
 
-                <form onSubmit={handleSubmit} className="space-y-2">
-                  <TerminalInput
-                    label="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(value) =>
-                      setFormData({ ...formData, email: value })
-                    }
-                    placeholder="user@example.com"
-                  />
+              <form onSubmit={handleSubmit} className="space-y-2">
 
-                  <TerminalInput
-                    label="password"
-                    type="password"
-                    value={formData.password}
-                    onChange={(value) =>
-                      setFormData({ ...formData, password: value })
-                    }
-                    placeholder="••••••••"
-                  />
+                <TerminalInput
+                  label="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(value) =>
+                    setFormData((prev) => ({ ...prev, email: value }))
+                  }
+                  placeholder="user@example.com"
+                />
 
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full mt-6 px-6 py-3 bg-primary text-primary-foreground rounded-md font-bold hover:scale-105 transition-all duration-300 terminal-glow disabled:opacity-50 disabled:cursor-not-allowed"
+                <TerminalInput
+                  label="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={(value) =>
+                    setFormData((prev) => ({ ...prev, password: value }))
+                  }
+                  placeholder="••••••••"
+                />
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full mt-6 px-6 py-3 bg-primary text-primary-foreground rounded-md font-bold hover:scale-105 transition-all duration-300 terminal-glow disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span>VERIFYING</span>
+                      <span className="animate-cursor-blink">|</span>
+                    </span>
+                  ) : (
+                    "LOGIN"
+                  )}
+                </button>
+
+                <div className="mt-6 text-center">
+                  <Link
+                    href="/register"
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300"
                   >
-                    {isSubmitting ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <span>VERIFYING</span>
-                        <span className="animate-cursor-blink">|</span>
-                      </span>
-                    ) : (
-                      "LOGIN"
-                    )}
-                  </button>
-
-                  <div className="mt-6 text-center">
-                    <Link
-                      href={"/register"}
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300"
-                    >
-                      <span className="text-primary">&gt;</span> Don’t have an
-                      account?{" "}
-                      <span className="underline font-bold">Sign up</span>
-                    </Link>
-                  </div>
-                </form>
+                    <span className="text-primary">&gt;</span> Don’t have an
+                    account?{" "}
+                    <span className="underline font-bold">Sign up</span>
+                  </Link>
+                </div>
+              </form>
 
               {/* Footer */}
               <div className="mt-8 pt-4 border-t border-terminal-border">
@@ -120,6 +130,7 @@ const Login = () => {
                   Secure access mode
                 </p>
               </div>
+
             </div>
           </div>
         </div>
@@ -129,4 +140,3 @@ const Login = () => {
 };
 
 export default Login;
-

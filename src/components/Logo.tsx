@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 import clsx from "clsx";
 
-type LogoSize = "sm" | "md" | "lg" | "xl" | "2xl";
+type LogoSize = "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
 
 interface LogoProps {
   href?: string;
@@ -37,10 +37,14 @@ const sizeConfig: Record<
     icon: "h-12 w-12",
     text: "text-4xl",
   },
+  "3xl": {
+    icon: "h-14 w-14",
+    text: "text-5xl",
+  },
 };
 
 function Logo({ href = "/", size = "md" }: LogoProps) {
-  const styles = sizeConfig[size];
+  const styles = sizeConfig[size] || sizeConfig.md; 
 
   return (
     <Link
