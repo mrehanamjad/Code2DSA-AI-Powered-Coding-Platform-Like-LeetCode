@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { apiClient } from "@/lib/apiClient/apiClient";
 import {
   Loader2, Bug, Zap, Clock, Database, X, Sparkles, CheckCircle2, Terminal,
@@ -26,28 +26,7 @@ export default function AICodeAnalysisModal({
   const [analysis, setAnalysis] = useState<AICodeAnalyzerResposeI | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (isOpen && code && problemStatement) {
-      handleAnalyze();
-    }
-    if (!isOpen) {
-      setAnalysis(null);
-      setLoading(false);
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    if (isOpen) document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
-
-
-  const handleAnalyze = async () => {
+  const handleAnalyze = useCallback(async () => {
     setLoading(true);
     try {
       const res = await apiClient.getAICodeAnalysis({
@@ -69,7 +48,27 @@ export default function AICodeAnalysisModal({
     } finally {
       setLoading(false);
     }
-  };
+  }, [code, language, problemStatement]);
+
+  useEffect(() => {
+    if (isOpen && code && problemStatement) {
+      handleAnalyze();
+    }
+    if (!isOpen) {
+      setAnalysis(null);
+      setLoading(false);
+    }
+  }, [isOpen, code, handleAnalyze, problemStatement]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    if (isOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
 
   return (
     <>

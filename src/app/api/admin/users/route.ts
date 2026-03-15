@@ -83,6 +83,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json(updatedUser, { status: 200 });
 
   } catch (error) {
+    console.error("Users API Error:", error);
     return NextResponse.json({ error: "Failed to update user" }, { status: 500 });
   }
 }

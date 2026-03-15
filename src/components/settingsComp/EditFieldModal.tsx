@@ -97,12 +97,19 @@ export function EditFieldModal({
   // Watch the newPassword field to validate confirmPassword against it
   const newPasswordValue = watch("newPassword");
 
-  // Reset form when modal opens or field changes
   useEffect(() => {
     if (isOpen) {
-      reset(defaultValues);
+      let defaults: FormInputs = {};
+      if (field === "profile") {
+        defaults = { name: currentUser.name || "", bio: currentUser.bio || "", phone: currentUser.phone || "" };
+      } else if (field === "userName") {
+        defaults = { userName: currentUser.userName || "" };
+      } else if (field === "password") {
+        defaults = { currentPassword: "", newPassword: "", confirmPassword: "" };
+      }
+      reset(defaults);
     }
-  }, [isOpen, field, reset]); // Added 'field' to deps to prevent stale defaults
+  }, [isOpen, field, currentUser, reset]);
 
   const onSubmit = async (data: FormInputs) => {
     try {

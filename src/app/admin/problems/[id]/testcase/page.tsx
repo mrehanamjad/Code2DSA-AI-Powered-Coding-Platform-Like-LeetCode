@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { ArrowLeft, Save, Eye, EyeOff, Trash2, Plus, Loader2, Beaker } from "lucide-react";
+import { ArrowLeft, EyeOff, Trash2, Plus, Loader2, Beaker } from "lucide-react";
 
 // Components
 import { FormSection } from "@/components/admin/FormSection";
@@ -93,12 +93,14 @@ export default function AddTestcasePage() {
           throw new Error("Input must be a JSON array of arguments.");
         }
       } catch (e) {
+        console.log(e);
         throw new Error("Invalid Input JSON. Must be an array, e.g., [1, 2]");
       }
 
       try {
         parsedExpected = JSON.parse(expected);
       } catch (e) {
+        console.log(e);
         throw new Error("Invalid Expected Output JSON.");
       }
 
@@ -127,8 +129,8 @@ export default function AddTestcasePage() {
       setExpected("");
       setIsHidden(false);
 
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "An error occurred.");
     } finally {
       setIsSubmitting(false);
     }
@@ -142,10 +144,10 @@ export default function AddTestcasePage() {
         throw new Error(data.error || "Failed to delete");
       }
 
-      setTestCases(testCases.filter(tc => (tc as any)._id !== id));
+      setTestCases(testCases.filter(tc => String(tc._id) !== id));
       toast.success("Test case removed.");
-    } catch (err: any) {
-      toast.error(err.message || "Could not delete test case.");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Could not delete test case.");
     }
   };
 
@@ -237,7 +239,7 @@ export default function AddTestcasePage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {testCases.map((tc: any, idx) => (
+                    {testCases.map((tc, idx) => (
                       <TableRow key={tc._id} className="group">
                         <TableCell className="text-muted-foreground font-mono text-xs">{idx + 1}</TableCell>
                         <TableCell>

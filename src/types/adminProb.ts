@@ -39,6 +39,7 @@ export interface ProblemI {
 }
 
 export interface TestCaseI {
+  _id: string;
   id: string;
   problemId: string;
   input: unknown[];

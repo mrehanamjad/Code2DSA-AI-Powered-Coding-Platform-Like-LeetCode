@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import User from "@/models/user.model";
 import Problem from "@/models/problem.model";
 import Submission from "@/models/submission.model";
@@ -6,7 +6,7 @@ import { connectionToDatabase } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { AuthOptions } from "@/lib/auth";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(AuthOptions);
 
