@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { PlusCircle, Search, SlidersHorizontal, Loader2 } from "lucide-react";
 
@@ -20,19 +20,18 @@ export default function ProblemsPage() {
   const [problems, setProblems] = useState<ProblemI[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null); // used in handleDelete
 
   // Fetch Problems
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchProblems = async () => {
       try {
         setIsLoading(true);
-        // We can use the existing /api/problems which supports pagination but here we fetch all or a large limit for the admin list
         const res = await fetch("/api/problems?limit=100");
         if (!res.ok) throw new Error("Failed to fetch problems");
         const data = await res.json();
         setProblems(data.problems || []);
-      } catch (error) {
+      } catch (_) {
         toast.error("Failed to load problems from server.");
       } finally {
         setIsLoading(false);
@@ -40,7 +39,7 @@ export default function ProblemsPage() {
     };
 
     fetchProblems();
-  }, [toast]);
+  }, []);
 
   // Filtered Logic
   const filteredProblems = useMemo(() => {
@@ -85,7 +84,7 @@ export default function ProblemsPage() {
               Challenge Inventory
             </h1>
             <p className="text-muted-foreground text-lg">
-              Monitor, edit, and curate your platform's coding challenges.
+              Monitor, edit, and curate your platform&apos;s coding challenges.
             </p>
           </div>
           

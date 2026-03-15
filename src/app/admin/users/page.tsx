@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { 
-  Users, 
   Search, 
   MoreVertical, 
   Shield, 
@@ -56,7 +55,7 @@ export default function UserManagement() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setIsLoading(true);
       const res = await fetch(`/api/admin/users?query=${debouncedSearch}&page=${page}`);
@@ -64,17 +63,17 @@ export default function UserManagement() {
       const data = await res.json();
       setUsers(data.users);
       setTotalPages(data.pagination.pages);
-    } catch (error) {
+    } catch (_) {
       toast.error("Could not load user list.");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [debouncedSearch, page]);
 
 
   useEffect(() => {
     fetchUsers();
-  }, [debouncedSearch, page]);
+  }, [fetchUsers]);
 
   const toggleRole = async (user: User) => {
     const newRole = user.role === "admin" ? "user" : "admin";
@@ -93,7 +92,7 @@ export default function UserManagement() {
       toast.success(`${user.name} is now an ${newRole}.`);
       
       setUsers(prev => prev.map(u => u._id === user._id ? { ...u, role: newRole } : u));
-    } catch (error) {
+    } catch (_) {
       toast.error("Failed to update user role.");
     } finally {
       setIsUpdating(null);
