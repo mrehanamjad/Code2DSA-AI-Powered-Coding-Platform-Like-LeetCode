@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import Problem from "@/models/problem.model";
 import { connectionToDatabase } from "@/lib/db";
 import TestCase from "@/models/testcase.model";
+import { getServerSession } from "next-auth";
+import { AuthOptions } from "@/lib/auth";
+import { ProblemSchema } from "@/lib/validations";
 
 // Define params type for App Router
 type Props = {
@@ -54,14 +57,35 @@ export async function GET(req: NextRequest, { params }: Props) {
  */
 export async function PUT(req: NextRequest, { params }: Props) {
   try {
+    const session = await getServerSession(AuthOptions);
+
+    if (!session?.user.id || session.user.role !== "admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     await connectionToDatabase();
 
     const { problemId } = await params;
     const body = await req.json();
 
+    // 1. Zod Validation for strict type safety and value checking
+    const validation = ProblemSchema.partial().safeParse(body);
+    
+    if (!validation.success) {
+      return NextResponse.json(
+        { 
+          error: "Validation failed", 
+          details: validation.error.errors.map(e => ({ path: e.path, message: e.message })) 
+        },
+        { status: 400 }
+      );
+    }
+
+    const validatedData = validation.data;
+
     // Prevent updating problemId if necessary, or check for duplicates if allowed
-    if (body.problemId && body.problemId !== problemId) {
-      const existing = await Problem.findOne({ problemId: body.problemId });
+    if (validatedData.problemId && validatedData.problemId !== problemId) {
+      const existing = await Problem.findOne({ problemId: validatedData.problemId });
       if (existing) {
         return NextResponse.json(
           { error: "New Problem ID is already taken" },
@@ -72,7 +96,7 @@ export async function PUT(req: NextRequest, { params }: Props) {
 
     const updatedProblem = await Problem.findOneAndUpdate(
       { problemId },
-      { $set: body },
+      { $set: validatedData },
       { new: true, runValidators: true }
     );
 
@@ -100,6 +124,12 @@ export async function PUT(req: NextRequest, { params }: Props) {
  */
 export async function DELETE(req: NextRequest, { params }: Props) {
   try {
+    const session = await getServerSession(AuthOptions);
+
+    if (!session?.user.id || session.user.role !== "admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     await connectionToDatabase();
 
     const { problemId } = await params;

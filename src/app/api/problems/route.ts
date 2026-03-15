@@ -4,12 +4,13 @@ import { connectionToDatabase } from "@/lib/db";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { AuthOptions } from "@/lib/auth";
+import { ProblemSchema } from "@/lib/validations";
+import { z } from "zod";
 
 /**
  * @method GET
  * @desc Fetch all problems with pagination and filtering
  */
-
 export async function GET(req: NextRequest) {
   try {
     await connectionToDatabase();
@@ -238,27 +239,31 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (
-      session?.user.id.toString() !== "693eb2bfe588a4e1e4a208c6" &&
-      session?.user.username !== "rehan7161"
-    ) {
+    if (session.user.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectionToDatabase();
     const body = await req.json();
 
-    // Basic validation check (Mongoose will handle detailed validation)
-    if (!body.problemId || !body.title || !body.difficulty) {
+    // 1. Zod Validation for strict type safety and value checking
+    const validation = ProblemSchema.safeParse(body);
+    
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { 
+          error: "Validation failed", 
+          details: validation.error.errors.map(e => ({ path: e.path, message: e.message })) 
+        },
         { status: 400 }
       );
     }
 
+    const validatedData = validation.data;
+
     // Check for duplicate problemId
     const existingProblem = await Problem.findOne({
-      problemId: body.problemId,
+      problemId: validatedData.problemId,
     });
     if (existingProblem) {
       return NextResponse.json(
@@ -267,7 +272,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const newProblem = await Problem.create(body);
+    const newProblem = await Problem.create(validatedData);
 
     return NextResponse.json(
       { message: "Problem created successfully", problem: newProblem },

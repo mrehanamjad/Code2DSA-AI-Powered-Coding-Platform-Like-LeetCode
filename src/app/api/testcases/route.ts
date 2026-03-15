@@ -3,8 +3,9 @@ import TestCase from "@/models/testcase.model";
 import { connectionToDatabase } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { AuthOptions } from "@/lib/auth";
+import { TestCaseSchema } from "@/lib/validations";
+import { z } from "zod";
 
-// GET: Fetch all test cases, or filter by 'problemId' query param
 export async function GET(request: NextRequest) {
   try {
     await connectionToDatabase();
@@ -35,21 +36,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if(session?.user.id.toString() !== "693eb2bfe588a4e1e4a208c6" && session?.user.username !== "rehan7161") {
+    if (session.user.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectionToDatabase();
     const body = await request.json();
 
-    // Basic validation
-    if (!body.problemId || !body.input || body.expected === undefined) {
+    // 1. Zod Validation for strict type safety and value checking
+    const postSchema = TestCaseSchema.extend({
+      problemId: z.string().min(1, "Problem ID is required"),
+    });
+
+    const validation = postSchema.safeParse(body);
+    
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "Missing required fields: problemId, input, or expected" },
+        { 
+          error: "Validation failed", 
+          details: validation.error.errors.map(e => ({ path: e.path, message: e.message })) 
+        },
         { status: 400 }
       );
     }
-    const newTestCase = await TestCase.create(body);
+
+    const validatedData = validation.data;
+
+    const newTestCase = await TestCase.create(validatedData);
 
     return NextResponse.json(newTestCase, { status: 201 });
   } catch (error) {

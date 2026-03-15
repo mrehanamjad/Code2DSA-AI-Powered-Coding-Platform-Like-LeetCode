@@ -42,12 +42,12 @@ interface EditorPanelProps {
 }
 
 // --- Helpers ---
-const languageMap: Record<string, string> = {
-  javascript: "javascript",
-  typescript: "typescript",
-  python: "python",
-  java: "java",
-  cpp: "cpp",
+// OneCompiler language identifiers and default filenames
+const languageMap: Record<string, { lang: string; filename: string }> = {
+  javascript: { lang: "javascript", filename: "index.js" },
+  python:     { lang: "python",     filename: "index.py" },
+  java:       { lang: "java",       filename: "Main.java" },
+  cpp:        { lang: "cpp",        filename: "main.cpp" },
 };
 
 const wrapperMap: Record<
@@ -162,19 +162,24 @@ export function EditorPanel({
       );
       const startTime = performance.now();
 
-      const response = await fetch("https://emkc.org/api/v2/piston/execute", {
+      const langConfig = languageMap[language];
+      if (!langConfig) throw new Error(`Language ${language} not supported.`);
+
+      const response = await fetch("/api/execute", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          language: languageMap[language],
-          version: "*",
-          files: [{ content: fullCode }],
+          language: langConfig.lang,
+          stdin: "",
+          files: [{ name: langConfig.filename, content: fullCode }],
         }),
       });
 
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
       const result = await response.json();
+
+      console.log("[EditorPanel] OneCompiler response:", result);
       const executionTime = Math.round(performance.now() - startTime);
 
       // --- Status Logic ---
@@ -182,21 +187,23 @@ export function EditorPanel({
       let errorDetails = "";
       const parsedResults: {testNumber: number, passed: boolean, output?: unknown, expected?: unknown, error?: string}[] = [];
       let dbSubmissionId = "";
-      if (result.compile && result.compile.stderr && result.compile.code !== 0) {
+      // OneCompiler response shape: { status, stdout, stderr, exception }
+      const stdout: string = result.stdout || "";
+      const stderr: string = result.stderr || "";
+      const exception: string = result.exception || "";
+      const apiStatus: string = (result.status || "").toLowerCase();
+
+      if (apiStatus === "compilation_error" || (exception && !stdout)) {
         status = "COMPILE_ERROR";
-        errorDetails = result.compile.stderr || result.compile.output;
-      } 
-      else if (result.run && result.run.stdout?.lenghth === 0 &&result.run.signal === "SIGKILL") {
+        errorDetails = exception || stderr;
+      } else if (apiStatus === "runtime_error" || (stderr && !stdout)) {
+        status = "RUNTIME_ERROR";
+        errorDetails = stderr || exception;
+      } else if (apiStatus === "time_limit_exceeded") {
         status = "TLE";
         errorDetails = "Time Limit Exceeded";
-      } 
-      else if (result.run && result.run.stderr && result.run.code !== 0) {
-        status = "RUNTIME_ERROR";
-        errorDetails = result.run.stderr || result.run.output;
-      } else if (result.run) {
-        const lines = (result.run.stdout || "")
-          .split("\n")
-          .filter((l: string) => l.trim());
+      } else if (stdout) {
+        const lines = stdout.split("\n").filter((l: string) => l.trim());
         for (const line of lines) {
           const match = line.match(/Test\s+(\d+):\s+(PASSED|FAILED|ERROR)/i);
           if (!match) continue;
@@ -210,36 +217,38 @@ export function EditorPanel({
             });
             continue;
           }
-          const outMatch = line.match(
-            /Output:\s*(.+?)\s*\|\s*Expected:\s*(.+?)$/i
-          );
-          if (outMatch) {
-            let output, expected;
-            try {
-              output = JSON.parse(outMatch[1]);
-            } catch {
-              output = outMatch[1];
-            }
-            try {
-              expected = JSON.parse(outMatch[2]);
-            } catch {
-              expected = outMatch[2];
-            }
-            parsedResults.push({
-              testNumber,
-              passed: st === "PASSED",
-              output,
-              expected,
-            });
-          }
+          // Extract "Output:" part and "Expected:" part by splitting on the literal separator
+          const outputIdx = line.indexOf(" | Output: ");
+          if (outputIdx === -1) continue; // malformed line
+          const afterOutput = line.slice(outputIdx + " | Output: ".length);
+          const expectedSep = " | Expected: ";
+          const expectedIdx = afterOutput.lastIndexOf(expectedSep);
+          if (expectedIdx === -1) continue;
+          const rawOutput = afterOutput.slice(0, expectedIdx).trim();
+          const rawExpected = afterOutput.slice(expectedIdx + expectedSep.length).trim();
+          let output, expected;
+          try { output = JSON.parse(rawOutput); } catch { output = rawOutput; }
+          try { expected = JSON.parse(rawExpected); } catch { expected = rawExpected; }
+          parsedResults.push({
+            testNumber,
+            passed: st === "PASSED",
+            output,
+            expected,
+          });
         }
-        status =
-          parsedResults.length > 0 && parsedResults.every((t) => t.passed)
-            ? "ACCEPTED"
-            : "WRONG_ANSWER";
+        // If wrapper produced no structured output lines, treat as runtime error
+        if (parsedResults.length === 0 && stderr) {
+          status = "RUNTIME_ERROR";
+          errorDetails = stderr;
+        } else {
+          status =
+            parsedResults.length > 0 && parsedResults.every((t) => t.passed)
+              ? "ACCEPTED"
+              : "WRONG_ANSWER";
+        }
       } else {
         status = "INTERNAL_ERROR";
-        errorDetails = "No result returned.";
+        errorDetails = "No result returned from the compiler.";
       }
       // --- Submission Logic ---
       if (type === "submit") {
@@ -274,7 +283,7 @@ export function EditorPanel({
 
       const dataToSet = {
         status,
-        output: result.run?.stdout,
+        output: stdout,
         error: errorDetails,
         executionTime,
         testResults: parsedResults,

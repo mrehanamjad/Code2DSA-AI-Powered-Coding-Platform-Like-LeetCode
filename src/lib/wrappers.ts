@@ -37,7 +37,7 @@ for (let i = 0; i < testCases.length; i++) {
   try {
     const result = ${functionName}(...input);
     const passed = deepEqual(result, expected);
-    console.log("Test " + (i + 1) + ": " + (passed ? "PASSED" : "FAILED") + " | Output:", JSON.stringify(result), "| Expected:", JSON.stringify(expected));
+    console.log("Test " + (i + 1) + ": " + (passed ? "PASSED" : "FAILED") + " | Output: " + JSON.stringify(result) + " | Expected: " + JSON.stringify(expected));
   } catch (err) {
     console.log("Test " + (i + 1) + ": ERROR | " + err.message);
   }
@@ -70,7 +70,7 @@ export const PythonWrapper = (
     .map((tc, i) => {
       const args = tc.input.map((inp) => toPythonValue(inp)).join(", ");
       const expectedValue = toPythonValue(tc.expected);
-      
+
       return `
 # Test ${i + 1}
 try:
@@ -78,9 +78,9 @@ try:
     expected = ${expectedValue}
     passed = result == expected
     status = "PASSED" if passed else "FAILED"
-    print(f"Test ${i + 1}: {status} | Output: {result} | Expected: {expected}")
+    print("Test ${i + 1}: " + status + " | Output: " + json.dumps(result) + " | Expected: " + json.dumps(expected))
 except Exception as e:
-    print(f"Test ${i + 1}: ERROR | {str(e)}")
+    print("Test ${i + 1}: ERROR | " + str(e))
 `;
     })
     .join("\n");
@@ -95,6 +95,7 @@ ${testCode
   .map((line) => "    " + line)
   .join("\n")}
 `;
+
 };
 
 export const JavaWrapper = (

@@ -1,5 +1,4 @@
 import { SubmissionI } from "@/models/submission.model";
-import { UserI } from "@/models/user.model";
 import mongoose from "mongoose"
 
 export interface SubmissionForProblemI extends Document {
@@ -29,7 +28,17 @@ export type SubmissionResponseT = Omit<SubmissionI, "problemId"> & {
 };
 
 
-export type PublicUser = Omit<UserI, "password">;
+export interface PublicUser {
+  _id: mongoose.Types.ObjectId;
+  userName: string;
+  name: string;
+  email: string;
+  avatar: { id: string; url: string };
+  phone: string;
+  bio: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 
 export interface AICodeAnalyzerResposeI {

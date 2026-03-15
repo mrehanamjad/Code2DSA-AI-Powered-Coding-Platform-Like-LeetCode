@@ -38,6 +38,7 @@ export const AuthOptions: NextAuthOptions = {
             id: user._id.toString(),
             email: user.email,
             username: user.userName,
+            role: user.role,
           };
         } catch (error) {
           console.error("Auth error:", error);
@@ -52,6 +53,7 @@ export const AuthOptions: NextAuthOptions = {
         token.id = user.id;
         token.email = user.email;
         token.username = user.username;
+        token.role = user.role;
       }
       // Handle Session Update 
       if (trigger === "update" && session?.user) {
@@ -67,6 +69,7 @@ export const AuthOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
         session.user.username = token.username as string;
+        session.user.role = token.role as "user" | "admin";
       }
       return session;
     },

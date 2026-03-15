@@ -1,11 +1,12 @@
 import mongoose, { Document, model, models, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 
-export interface UserI {
+export interface UserI extends Document {
   userName: string;
   name: string;
   email: string;
   password: string;
+  role: "user" | "admin";
   avatar: { id: string; url: string };
   phone: string;
   bio: string;
@@ -14,7 +15,9 @@ export interface UserI {
   updatedAt?: Date;
 }
 
-const UserSchema = new Schema<UserI & Document>(
+
+
+const UserSchema = new Schema<UserI>(
   {
     userName: {
       type: String,
@@ -42,6 +45,13 @@ const UserSchema = new Schema<UserI & Document>(
       type: String,
       required: true,
       minlength: 8,
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+      required: true,
+      index: true,
     },
     avatar: {
       url: {

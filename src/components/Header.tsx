@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./ThemeToggle";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react"; // Import signOut
-// 1. Import Dropdown components
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,12 +59,6 @@ const Header = () => {
               className="text-sm font-medium transition-smooth hover:text-primary"
             >
               Problems
-            </Link>
-            <Link
-              href={`/code`}
-              className="text-sm font-medium transition-smooth hover:text-primary"
-            >
-              Editor
             </Link>
           </nav>
 
@@ -213,15 +206,6 @@ const Header = () => {
         >
           <Code className="h-5 w-5" />
           <span>Problems</span>
-        </Link>
-        
-        <Link
-          href={"/code"}
-          onClick={() => setIsMenuOpen(false)}
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
-        >
-          <User className="h-5 w-5" />
-          <span>Editor</span>
         </Link>
       </div>
 
