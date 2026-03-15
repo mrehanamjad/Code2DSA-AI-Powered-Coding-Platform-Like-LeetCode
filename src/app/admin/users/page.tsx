@@ -63,7 +63,7 @@ export default function UserManagement() {
       const data = await res.json();
       setUsers(data.users);
       setTotalPages(data.pagination.pages);
-    } catch (_) {
+} catch {
       toast.error("Could not load user list.");
     } finally {
       setIsLoading(false);
@@ -92,7 +92,7 @@ export default function UserManagement() {
       toast.success(`${user.name} is now an ${newRole}.`);
       
       setUsers(prev => prev.map(u => u._id === user._id ? { ...u, role: newRole } : u));
-    } catch (_) {
+    } catch {
       toast.error("Failed to update user role.");
     } finally {
       setIsUpdating(null);

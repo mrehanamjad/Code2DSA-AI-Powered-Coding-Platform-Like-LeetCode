@@ -20,7 +20,6 @@ export default function ProblemsPage() {
   const [problems, setProblems] = useState<ProblemI[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isDeleting, setIsDeleting] = useState<string | null>(null); // used in handleDelete
 
   // Fetch Problems
   useEffect(() => {
@@ -31,7 +30,7 @@ export default function ProblemsPage() {
         if (!res.ok) throw new Error("Failed to fetch problems");
         const data = await res.json();
         setProblems(data.problems || []);
-      } catch (_) {
+     } catch {
         toast.error("Failed to load problems from server.");
       } finally {
         setIsLoading(false);
@@ -49,10 +48,8 @@ export default function ProblemsPage() {
     );
   }, [problems, searchQuery]);
 
-  const handleDelete = async (problemId: string) => {
+const handleDelete = async (problemId: string) => {
     if (!window.confirm(`Are you sure you want to delete ${problemId}?`)) return;
-    
-    setIsDeleting(problemId);
     
     try {
       const res = await fetch(`/api/problems/${problemId}`, {
@@ -69,8 +66,6 @@ export default function ProblemsPage() {
       toast.success(`Successfully deleted ${problemId}.`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to delete the problem.");
-    } finally {
-      setIsDeleting(null);
     }
   };
 

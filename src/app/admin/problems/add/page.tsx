@@ -108,7 +108,7 @@ export default function AddProblem() {
             setConstraints(parsed.constraints?.length ? parsed.constraints : [""]);
             setStarterCode(parsed.starterCode || generateStarterCode(parsed.function.name, parsed.function.params || []));
             setJsonError(null);
-          } catch (e: any) {
+         } catch {
             setJsonError("Invalid JSON format while typing...");
           }
        }, 500);
@@ -116,17 +116,17 @@ export default function AddProblem() {
     }
   }, [jsonInput, inputMode]);
 
-  // Handler Logic (Dynamic Lists)
-  const updateList = (setter: any, index: number, value: any) => {
-    setter((prev: any[]) => {
+// Handler Logic (Dynamic Lists)
+  const updateList = <T,>(setter: React.Dispatch<React.SetStateAction<T[]>>, index: number, value: T) => {
+    setter((prev) => {
       const newList = [...prev];
       newList[index] = value;
       return newList;
     });
   };
 
-  const removeItem = (setter: any, index: number, minLength = 1) => {
-    setter((prev: any[]) => prev.length > minLength ? prev.filter((_, i) => i !== index) : prev);
+  const removeItem = <T,>(setter: React.Dispatch<React.SetStateAction<T[]>>, index: number, minLength = 1) => {
+    setter((prev) => prev.length > minLength ? prev.filter((_, i) => i !== index) : prev);
   };
 
 
@@ -301,7 +301,7 @@ export default function AddProblem() {
                     </div>
                 </FormSection>
 
-                <FormSection title="Examples & Test Cases" description="Help users understand the expected behavior">
+            <FormSection title="Examples & Test Cases" description="Help users understand the expected behavior">
                   <div className="space-y-4">
                     {examples.map((ex, i) => (
                       <div key={i} className="p-4 border rounded-xl bg-muted/20 space-y-3 relative group">
@@ -313,13 +313,30 @@ export default function AddProblem() {
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                         <div className="grid grid-cols-2 gap-4">
-                          <Input value={ex.input} onChange={e => updateList(setExamples, i, {...ex, input: e.target.value})} placeholder="Input" />
-                          <Input value={ex.output} onChange={e => updateList(setExamples, i, {...ex, output: e.target.value})} placeholder="Output" />
+                          <Input 
+                            value={ex.input} 
+                            onChange={e => updateList(setExamples, i, {...ex, input: e.target.value} as ExampleI)} 
+                            placeholder="Input" 
+                          />
+                          <Input 
+                            value={ex.output} 
+                            onChange={e => updateList(setExamples, i, {...ex, output: e.target.value} as ExampleI)} 
+                            placeholder="Output" 
+                          />
                         </div>
-                        <Input value={ex.explanation} onChange={e => updateList(setExamples, i, {...ex, explanation: e.target.value})} placeholder="Explanation" />
+                        <Input 
+                          value={ex.explanation || ""} 
+                          onChange={e => updateList(setExamples, i, {...ex, explanation: e.target.value} as ExampleI)} 
+                          placeholder="Explanation" 
+                        />
                       </div>
                     ))}
-                    <Button type="button" variant="outline" onClick={() => setExamples([...examples, {input: "", output: "", explanation: ""}])} className="w-full border-dashed">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => setExamples([...examples, {input: "", output: "", explanation: ""} as ExampleI])} 
+                      className="w-full border-dashed"
+                    >
                       <Plus className="mr-2 h-4 w-4" /> Add Example Case
                     </Button>
                   </div>
