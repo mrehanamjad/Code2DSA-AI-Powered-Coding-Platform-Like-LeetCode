@@ -42,6 +42,7 @@ export function SubmissionTab({
       error={output.error ?? ""}
       code={code}
       executionTime={output.executionTime}
+      memoryUsed={output.memoryUsed}
       language={language}
       passedTestCases={passedTestCases}
       totalTestCases={totalTestCases}

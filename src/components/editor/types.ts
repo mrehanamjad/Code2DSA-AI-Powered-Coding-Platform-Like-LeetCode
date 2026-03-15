@@ -15,6 +15,7 @@ export interface ExecutionResult {
   output?: string;
   error?: string;
   executionTime?: number;
+  memoryUsed?: number;
   testResults?: Array<{
     testNumber: number;
     passed: boolean;

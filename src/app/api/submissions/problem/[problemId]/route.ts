@@ -14,7 +14,7 @@ export async function GET(
   { params }: { params: Promise<{ problemId: string }> }
 ) {
   try {
-    // --- 1. Authenticate User ---
+    //  1. Authenticate User 
     const session = await getServerSession(AuthOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -22,7 +22,7 @@ export async function GET(
 
     const { problemId } = await params;
 
-    // --- 2. Validate ObjectId ---
+    //  2. Validate ObjectId 
     if (!mongoose.Types.ObjectId.isValid(problemId)) {
       return NextResponse.json(
         { error: "Invalid problemId format" },
@@ -30,15 +30,15 @@ export async function GET(
       );
     }
 
-    // --- 3. DB Connection ---
+    //  3. DB Connection 
     await connectionToDatabase();
 
-    // --- 4. Fetch submissions ---
+    //  4. Fetch submissions 
     const submissions = await Submission.find({
       userId: session.user.id,
       problemId,
     })
-      .select("problemId status language note createdAt updatedAt")
+      .select("problemId status executionTime memoryUsed language note createdAt updatedAt")
       .sort({ createdAt: -1 }) // newest first
       .lean();
 

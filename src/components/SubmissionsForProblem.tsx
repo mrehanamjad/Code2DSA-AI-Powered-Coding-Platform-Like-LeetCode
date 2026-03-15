@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { apiClient } from "@/lib/apiClient/apiClient";
-import { Loader2, FilePenLine, Plus, X, ArrowUpRight } from "lucide-react";
+import { Loader2, FilePenLine, Plus, X, ArrowUpRight, Clock, MemoryStick } from "lucide-react";
 import Note from "./editor/Note";
 import { SubmissionForProblemI } from "@/lib/apiClient/types";
 import SubmissionPopup from "./editor/SubmissionPopup";
@@ -92,24 +92,18 @@ export function SubmissionsForProblem({ problemId, isEditor = true }: Submission
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    // Less than 1 minute
     if (diffInSeconds < 60) return "Just now";
-
-    // Less than 1 hour
     const diffInMinutes = Math.floor(diffInSeconds / 60);
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes} minute${diffInMinutes !== 1 ? "s" : ""} ago`;
-    }
-
-    // Less than 24 hours
+    if (diffInMinutes < 60) return `${diffInMinutes} minute${diffInMinutes !== 1 ? "s" : ""} ago`;
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) {
-      return `${diffInHours} hour${diffInHours !== 1 ? "s" : ""} ago`;
-    }
-
-    // Older than 24 hours
+    if (diffInHours < 24) return `${diffInHours} hour${diffInHours !== 1 ? "s" : ""} ago`;
     return date.toLocaleDateString();
+  };
+
+  const formatMemory = (bytes?: number) => {
+    if (bytes == null) return "–";
+    if (bytes < 1024) return `${bytes} B`;
+    return `${(bytes / 1024).toFixed(1)} KB`;
   };
 
  
@@ -128,6 +122,8 @@ export function SubmissionsForProblem({ problemId, isEditor = true }: Submission
                 <th className="h-10 px-4 font-medium whitespace-nowrap"></th>
                 <th className="h-10 px-4 font-medium whitespace-nowrap">Status</th>
                 <th className="h-10 px-4 font-medium whitespace-nowrap">Language</th>
+                <th className="h-10 px-4 font-medium whitespace-nowrap">Runtime</th>
+                <th className="h-10 px-4 font-medium whitespace-nowrap">Memory</th>
                 <th className="h-10 px-4 font-medium whitespace-nowrap">Date</th>
                 <th className="h-10 px-4 font-medium whitespace-nowrap">Note</th>
               </tr>
@@ -156,6 +152,20 @@ export function SubmissionsForProblem({ problemId, isEditor = true }: Submission
                     <Badge variant="secondary" className="font-normal">
                       {sub.language}
                     </Badge>
+                  </td>
+                  <td className="p-4 text-muted-foreground whitespace-nowrap">
+                    {sub.executionTime != null ? (
+                      <span className="flex items-center gap-1 text-xs">
+                        <Clock className="h-3 w-3" />{sub.executionTime}ms
+                      </span>
+                    ) : "–"}
+                  </td>
+                  <td className="p-4 text-muted-foreground whitespace-nowrap">
+                    {sub.memoryUsed != null ? (
+                      <span className="flex items-center gap-1 text-xs">
+                        <MemoryStick className="h-3 w-3" />{formatMemory(sub.memoryUsed)}
+                      </span>
+                    ) : "–"}
                   </td>
                   <td className="p-4 text-muted-foreground whitespace-nowrap">
                     {formatDate(sub.createdAt)}

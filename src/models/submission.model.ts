@@ -22,6 +22,8 @@ export interface SubmissionI extends Document {
     error?: string;
   } | null;
   error?: string;
+  executionTime?: number;  // ms — from OneCompiler response
+  memoryUsed?: number;     // bytes — from OneCompiler response
   note?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -81,6 +83,8 @@ const SubmissionSchema = new Schema<SubmissionI>(
       index: true,
     },
     error: { type: String, default: null },
+    executionTime: { type: Number, default: null },
+    memoryUsed: { type: Number, default: null },
     lastFailedTestCase: {
       type: FailedTestCaseSchema,
       default: null,

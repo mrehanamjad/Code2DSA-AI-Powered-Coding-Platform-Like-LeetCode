@@ -34,7 +34,6 @@ function ProblemPage() {
   const [problem, setProblem] = useState<ProblemI | null>(null);
   const [testCases, setTestCases] = useState<TestCaseI[] | null>([]);
   
-  // Set loading to true initially
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -45,9 +44,7 @@ function ProblemPage() {
       try {
         const res = await apiClient.getAProblem(problemId);
         if (!res.success) {
-          // You might want to handle specific error codes here
           toast.error(res.error || "Failed to load problem");
-          // If fetch fails, we stop loading, but problem remains null, triggering Not Found UI
         } else {
             setProblem(res.data?.problem as ProblemI);
             setTestCases(res.data?.testCases as TestCaseI[]);
@@ -63,7 +60,7 @@ function ProblemPage() {
     fetchProblemData();
   }, [problemId]);
 
-  // Theme Sync Logic
+  // Editor Theme Sync Logic
   useEffect(() => {
     const updateTheme = () => {
       const isDark = document.documentElement.classList.contains("dark");
@@ -78,17 +75,14 @@ function ProblemPage() {
     return () => observer.disconnect();
   }, []);
 
-  // 1. Show Skeleton while loading
   if (isLoading) {
     return <ProblemSkeleton />;
   }
 
-  // 2. Show Not Found if loading finished but no problem exists
   if (!problem) {
     return <ProblemNotFound />;
   }
 
-  // 3. Render Main UI
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
       <ProblemHeader />

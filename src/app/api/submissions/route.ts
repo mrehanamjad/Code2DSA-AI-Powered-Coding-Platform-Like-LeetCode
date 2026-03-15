@@ -6,7 +6,8 @@ import Submission, { SubmissionI } from "@/models/submission.model";
 import mongoose from "mongoose";
 import { updateUserStatistics } from "./updateUserStats";
 import { recordDailyActivity } from "./recordActivity";
-import Problem from "@/models/problem.model";
+
+
 
 /**
  * @method POST
@@ -38,6 +39,8 @@ export async function POST(req: NextRequest) {
       status,
       error,
       lastFailedTestCase = null,
+      executionTime = null,
+      memoryUsed = null,
       note = "",
     } = body;
 
@@ -78,6 +81,8 @@ export async function POST(req: NextRequest) {
       passedTestCases,
       status,
       error,
+      executionTime,
+      memoryUsed,
       lastFailedTestCase,
       note,
     });
@@ -126,6 +131,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(AuthOptions);
+
     if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -133,49 +139,58 @@ export async function GET(req: NextRequest) {
     await connectionToDatabase();
 
     const { searchParams } = new URL(req.url);
+
     const problemId = searchParams.get("problemId");
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
-    const skip = (page - 1) * limit;
 
     const userId = session.user.id;
 
-    // Build Query
-    const query: {
+    const matchStage: {
       userId: mongoose.Types.ObjectId;
       problemId?: mongoose.Types.ObjectId;
-    } = { userId: new mongoose.Types.ObjectId(userId) };
+    } = {
+      userId: new mongoose.Types.ObjectId(userId),
+    };
 
     if (problemId) {
-      query.problemId = new mongoose.Types.ObjectId(problemId);
+      matchStage.problemId = new mongoose.Types.ObjectId(problemId);
     }
 
-    // Efficient Querying:
-    // 1. lean(): Return plain JS objects instead of Mongoose Documents (faster)
-    // 2. select(): Exclude heavy fields like 'lastFailedTestCase' for the list view if not needed
-    // 3. sort(): Newest first
-    const [submissions, total] = await Promise.all([
-      Submission.find(query)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .populate({
-          path: "problemId",
-          model: Problem,
-          select: "title problemId",
-        })
-        .lean(),
-      Submission.countDocuments(query),
+    const aggregate = Submission.aggregate([
+      { $match: matchStage },
+      {
+        $lookup: {
+          from: "problems",
+          localField: "problemId",
+          foreignField: "_id",
+          as: "problem",
+        },
+      },
+      { $unwind: "$problem" },
+      {
+        $project: {
+          code: 0,
+          lastFailedTestCase: 0,
+          "problem.description": 0,
+        },
+      },
+      { $sort: { createdAt: -1 } },
     ]);
+
+    const options = { page, limit };
+
+    // @ts-expect-error - aggregatePaginate is added by the plugin but not in the types
+    const result = await Submission.aggregatePaginate(aggregate, options);
 
     return NextResponse.json(
       {
-        data: submissions,
+        data: result.docs,
         meta: {
-          total,
-          page,
-          limit,
-          totalPages: Math.ceil(total / limit),
+          total: result.totalDocs,
+          page: result.page,
+          limit: result.limit,
+          totalPages: result.totalPages,
         },
       },
       { status: 200 }
@@ -190,3 +205,4 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+

@@ -6,6 +6,8 @@ export interface SubmissionForProblemI extends Document {
   problemId: mongoose.Types.ObjectId;
   language: string;
   status: "accepted" | "wrongAnswer" | "runtimeError" | "compileError" | "tle";
+  executionTime?: number;
+  memoryUsed?: number;
   note?: string;
   createdAt?: Date;
   updatedAt?: Date;

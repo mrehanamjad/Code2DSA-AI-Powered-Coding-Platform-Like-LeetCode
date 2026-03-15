@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/tabs";
 import { ProblemI } from "@/models/problem.model";
 import { SubmissionsForProblem } from "./SubmissionsForProblem";
+import DifficultyBadge from "./DifficultyBadge";
 
 interface ProblemPanelProps {
   selectedProblem: ProblemI;
@@ -20,12 +21,6 @@ interface ProblemPanelProps {
 export function ProblemPanel({
   selectedProblem,
 }: ProblemPanelProps) {
-  const difficultyColor = {
-    Easy: "bg-success text-success-foreground",
-    Medium: "bg-warning text-warning-foreground",
-    Hard: "bg-error text-error-foreground",
-  };
-
   return (
     <div className="flex flex-col h-full">
 
@@ -34,9 +29,7 @@ export function ProblemPanel({
           <h1 className="text-2xl font-bold text-foreground">
             {selectedProblem && selectedProblem.title || "title"}
           </h1>
-          <Badge className={selectedProblem && difficultyColor[selectedProblem.difficulty]}>
-            {selectedProblem && selectedProblem.difficulty}
-          </Badge>
+          <DifficultyBadge difficulty={selectedProblem && selectedProblem.difficulty} />
         </div>
 
         <Tabs defaultValue="description" className="w-full">
@@ -100,12 +93,26 @@ export function ProblemPanel({
                 </ul>
               </Card>
             </div>
+
+             <div className="space-y-2">
+              <h3 className="text-lg font-semibold text-foreground">
+                Topics
+              </h3>
+              <Card className="p-4 bg-card">
+                <div className="flex flex-wrap gap-2">
+                  {selectedProblem && selectedProblem.topics.map((topic, idx) => (
+                    <Badge key={idx} variant="secondary" className="text-xs">{topic}</Badge>
+                  ))}
+                </div>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="solutions" className="p-4">
             <Card className="p-6 bg-card">
               <p className="text-muted-foreground text-center">
-                Solutions will be available after you solve the problem.
+                {/* Solutions will be available after you solve the problem. */}
+                Solutions coming soon...
               </p>
             </Card>
           </TabsContent>

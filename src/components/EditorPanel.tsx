@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Editor from "@monaco-editor/react";
-import { Play, Send, Clock } from "lucide-react";
+import { Play, Send, Clock, MemoryStick } from "lucide-react";
 import {
   CppWrapper,
   JavaScriptWrapper,
@@ -180,7 +180,9 @@ export function EditorPanel({
       const result = await response.json();
 
       console.log("[EditorPanel] OneCompiler response:", result);
-      const executionTime = Math.round(performance.now() - startTime);
+      // Use the actual compiler-reported timings (more accurate than client-side)
+      const executionTime: number = result.executionTime ?? Math.round(performance.now() - startTime);
+      const memoryUsed: number | undefined = result.memoryUsed ?? undefined;
 
       // --- Status Logic ---
       let status: ExecutionStatus = "ACCEPTED";
@@ -262,6 +264,8 @@ export function EditorPanel({
           passedTestCases: parsedResults.filter((r) => r.passed).length,
           status: mapStatusToDb(status),
           error: errorDetails,
+          executionTime,
+          memoryUsed,
           lastFailedTestCase: lastFailed
             ? {
                 input: JSON.stringify(
@@ -286,6 +290,7 @@ export function EditorPanel({
         output: stdout,
         error: errorDetails,
         executionTime,
+        memoryUsed,
         testResults: parsedResults,
         isSubmit: type === "submit",
         submissionId: dbSubmissionId,
@@ -433,10 +438,16 @@ export function EditorPanel({
                           >
                             {runOutput.status.replace("_", " ")}
                           </span>
-                          {runOutput.executionTime && (
+                        {runOutput.executionTime != null && (
                             <span className="text-xs text-muted-foreground flex items-center gap-1">
                               <Clock className="h-3 w-3" />{" "}
                               {runOutput.executionTime}ms
+                            </span>
+                          )}
+                          {runOutput.memoryUsed != null && (
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <MemoryStick className="h-3 w-3" />{" "}
+                              {(runOutput.memoryUsed / 1024).toFixed(1)}KB
                             </span>
                           )}
                         </div>
