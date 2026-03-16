@@ -72,6 +72,12 @@ class ApiClient {
     );
   }
 
+  async deleteProblem(problemId: string) {
+    return this.request(`/problems/${problemId}`, {
+      method: "DELETE",
+    });
+  }
+
   async createSubmission(body: SubmissionI) {
     return this.request<SubmissionI>(`/submissions/`, {
       method: "POST",

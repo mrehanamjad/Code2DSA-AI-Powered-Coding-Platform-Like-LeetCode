@@ -31,7 +31,6 @@ function SubmissionPopup({
       if (!submissionId) return;
       setLoading(true);
       const response = await apiClient.getSubmissionDetailById(submissionId);
-      console.log(response);
       if (response.success && response.data) {
         setSubmission(response.data);
       } else {

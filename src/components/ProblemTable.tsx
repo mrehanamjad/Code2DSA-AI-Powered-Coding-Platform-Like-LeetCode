@@ -9,6 +9,7 @@ import { ProblemI } from "@/models/problem.model";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Edit2, PlusCircle, Trash2 } from "lucide-react"; // Optional: Add icons for better UI
+import { apiClient } from "@/lib/apiClient/apiClient";
 
 interface ProblemTableProps {
   problems: ProblemI[];
@@ -22,6 +23,7 @@ const ProblemTable = ({ problems, admin=false,onDelete }: ProblemTableProps) => 
   const isAdmin = admin && session?.user.role === "admin";
 
   const handleDelete = async (e: React.MouseEvent, problemId: string) => {
+    if (!isAdmin) return;
     e.preventDefault();
     e.stopPropagation();
 
@@ -33,8 +35,8 @@ const ProblemTable = ({ problems, admin=false,onDelete }: ProblemTableProps) => 
     if (!window.confirm("Are you sure you want to delete this problem?")) return;
 
     try {
-      const res = await fetch(`/api/problems/${problemId}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete");
+      const res = await apiClient.deleteProblem(problemId);
+      if (!res.success) throw new Error("Failed to delete");
       router.refresh();
     } catch (error) {
       console.error(error);
