@@ -1,6 +1,3 @@
-
-
-
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import ReactMarkdown from "react-markdown";

@@ -17,7 +17,7 @@ import Note from "./Note";
 import { ExecutionStatus, isCriticalError } from "./types";
 import { cn } from "@/lib/utils";
 import { SubmissionForProblemI } from "@/lib/apiClient/types";
-import AICodeAnalysisModal from "../AICodeAnalysis";
+import AICodeAnalysisModal from "../Ai/AICodeAnalysis";
 
 interface TestDetailI {
   inputs: unknown[];
