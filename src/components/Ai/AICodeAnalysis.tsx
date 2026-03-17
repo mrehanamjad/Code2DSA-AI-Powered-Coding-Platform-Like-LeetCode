@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { AICodeAnalyzerResposeI } from "@/lib/apiClient/types";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 interface AICodeAnalysisModalProps {
   problemStatement: string;
