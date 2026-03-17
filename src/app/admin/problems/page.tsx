@@ -8,10 +8,10 @@ import { PlusCircle, Search, SlidersHorizontal, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import ProblemTable from "@/components/ProblemTable";
+import ProblemTable from "@/components/Problems/ProblemTable";
 
 
-import { ProblemForTableI } from "@/components/ProblemTable";
+import { ProblemForTableI } from "@/components/Problems/ProblemTable";
 
 export default function ProblemsPage() {
   const router = useRouter();

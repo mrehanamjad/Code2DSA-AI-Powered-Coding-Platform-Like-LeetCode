@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import ProblemTable from "@/components/ProblemTable";
-import SearchInput from "@/components/SearchInput";
-import FilterToggleWrapper from "@/components/FilterToggleWrapper"; // New small wrapper
+import ProblemTable from "@/components/Problems/ProblemTable";
+import SearchInput from "@/components/Problems/SearchInput";
+import FilterToggleWrapper from "@/components/Problems/FilterToggleWrapper"; // New small wrapper
 import { ProblemI } from "@/models/problem.model";
-import { SortSelect } from "@/components/SortSelect";
+import { SortSelect } from "@/components/Problems/SortSelect";
 import PaginationControls from "@/components/PaginationControls";
 import mongoose from "mongoose";
 

@@ -7,11 +7,11 @@ import {
   ResizablePanel,
   ResizableHandle,
 } from "@/components/ui/resizable";
-import { ProblemPanel } from "@/components/ProblemPanel";
-import { EditorPanel } from "@/components/EditorPanel";
-import { ProblemHeader } from "@/components/ProblemHeader";
-import { ProblemSkeleton } from "@/components/skeletons/ProblemSkeleton"; // Import Skeleton
-import { ProblemNotFound } from "@/components/ProblemNotFound"; // Import Not Found
+import { ProblemPanel } from "@/components/ProblemSolvingPage/ProblemPanel";
+import { EditorPanel } from "@/components/ProblemSolvingPage/EditorPanel";
+import { ProblemHeader } from "@/components/ProblemSolvingPage/ProblemHeader";
+import { ProblemSkeleton } from "@/components/Skeletons/ProblemSkeleton"; // Import Skeleton
+import { ProblemNotFound } from "@/components/ProblemSolvingPage/ProblemNotFound"; // Import Not Found
 import { useIsMobile } from "@/hooks/use-mobile";
 import { apiClient } from "@/lib/apiClient/apiClient";
 import { toast } from "sonner";

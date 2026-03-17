@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { SettingsCard } from "@/components/settingsComp/SettingsCard";
-import { AvatarSection } from "@/components/settingsComp/AvatarSection";
-import { EditFieldModal } from "@/components/settingsComp/EditFieldModal";
+import { SettingsCard } from "@/components/SettingsComp/SettingsCard";
+import { AvatarSection } from "@/components/SettingsComp/AvatarSection";
+import { EditFieldModal } from "@/components/SettingsComp/EditFieldModal";
 import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
 import { Types } from "mongoose";

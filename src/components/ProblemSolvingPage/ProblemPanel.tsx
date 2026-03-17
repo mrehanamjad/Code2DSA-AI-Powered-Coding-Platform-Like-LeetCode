@@ -11,9 +11,9 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { ProblemI } from "@/models/problem.model";
-import { SubmissionsForProblem } from "./SubmissionsForProblem";
-import DifficultyBadge from "./DifficultyBadge";
-import AddToListModal from "./lists/AddToListModal";
+import { SubmissionsForProblem } from "../Problems/SubmissionsForProblem";
+import DifficultyBadge from "../DifficultyBadge";
+import AddToListModal from "../Lists/AddToListModal";
 
 interface ProblemPanelProps {
   selectedProblem: ProblemI;

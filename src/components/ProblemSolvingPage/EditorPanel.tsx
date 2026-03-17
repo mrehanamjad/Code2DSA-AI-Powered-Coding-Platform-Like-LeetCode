@@ -21,14 +21,14 @@ import {
   ExecutionResult,
   TabType,
   isCriticalError,
-} from "./editor/types";
+} from "../Editor/types";
 import {
   EditorToolbar,
   ConsoleHeader,
   ErrorView,
   TestCaseDetail,
-} from "./editor/EditorComponents";
-import { SubmissionTab } from "./editor/SubmissionTab";
+} from "../Editor/EditorComponents";
+import { SubmissionTab } from "../Editor/SubmissionTab";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useAppSelector } from "@/lib/redux/hooks";

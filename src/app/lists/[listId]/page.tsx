@@ -26,7 +26,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import SortableProblemRow from "@/components/lists/SortableProblemRow";
+import SortableProblemRow from "@/components/Lists/SortableProblemRow";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,8 +39,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import PaginationControls from "@/components/PaginationControls";
-import CreateListModal from "@/components/lists/CreateListModal";
-import ProblemTableHeader from "@/components/ProblemTableHeader";
+import CreateListModal from "@/components/Lists/CreateListModal";
+import ProblemTableHeader from "@/components/Problems/ProblemTableHeader";
 
 type Props = {
   params: Promise<{

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft,  Timer, Play, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import Logo from "./Logo";
+import Logo from "../Logo";
 
 export const ProblemHeader = memo(function ProblemHeader() {
   const router = useRouter();

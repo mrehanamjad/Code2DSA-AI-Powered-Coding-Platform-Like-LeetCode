@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TerminalInput } from "@/components/AuthComponents/TerminalInput";
+import { TerminalInput } from "@/components/Auth/TerminalInput";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";

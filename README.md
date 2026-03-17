@@ -14,7 +14,8 @@
 
 ### AI-Powered Coding Platform (LeetCode-like)
 
-Code2DSA is a full-stack, AI-powered coding platform designed to help developers practice Data Structures & Algorithms efficiently. It features real-time code execution, structured learning workflows, custom problem lists, and an AI-based code reviewer that analyzes solutions and suggests improvements.
+Code2DSA is a full-stack, AI-powered coding platform designed to help developers practice Data Structures & Algorithms efficiently. It provides real-time code execution, multi-test case submissions,structured learning workflows, custom problem lists, performance tracking, and an AI-based code reviewer that analyzes solutions and offers improvement suggestions.
+
 
 ---
 

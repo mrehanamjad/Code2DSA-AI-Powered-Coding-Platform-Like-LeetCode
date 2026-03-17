@@ -54,7 +54,7 @@ export default function BaseProblemRow({
         {/* Clickable Area: Uses CSS 'contents' to keep grid children aligned */}
         <Link href={href} className="contents">
           <div className={`col-span-1 md:col-span-1 flex items-center md:justify-center ${dragHandle ? "ml-6 md:ml-0" : ""}`}>
-            <StatusIcon status={problem.status  || "Unsolved"} />
+            <StatusIcon status={problem.status || "Unsolved"} />
             <span className="md:hidden ml-2 font-medium">Status</span>
           </div>
 

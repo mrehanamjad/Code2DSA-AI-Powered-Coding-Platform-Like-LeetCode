@@ -9,8 +9,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Edit2, PlusCircle, Trash2 } from "lucide-react";
 import { apiClient } from "@/lib/apiClient/apiClient";
-import AddToListModal from "./lists/AddToListModal";
-import { Difficulty } from "./DifficultyBadge";
+import AddToListModal from "../Lists/AddToListModal";
+import { Difficulty } from "../DifficultyBadge";
 
 export interface ProblemForTableI {
   _id: string;

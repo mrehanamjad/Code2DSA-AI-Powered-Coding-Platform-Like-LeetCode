@@ -1,4 +1,4 @@
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { AdminSidebar } from "@/components/Admin/AdminSidebar";
 import { requireAdminAuth } from "@/lib/require-auth";
 import Script from "next/script";
 

@@ -3,7 +3,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Trash2 } from "lucide-react";
 import { PaginatedListProblems } from "@/lib/apiClient/types";
-import BaseProblemRow, { NormalizedProblem } from "@/components/BaseProblemRow";
+import BaseProblemRow, { NormalizedProblem } from "@/components/Problems/BaseProblemRow";
 
 type ProblemItem = PaginatedListProblems["docs"][0];
 

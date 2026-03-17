@@ -4,9 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { apiClient } from "@/lib/apiClient/apiClient";
 import { Loader2, FilePenLine, Plus, X, ArrowUpRight, Clock, MemoryStick } from "lucide-react";
-import Note from "./editor/Note";
+import Note from "../Editor/Note";
 import { SubmissionForProblemI } from "@/lib/apiClient/types";
-import SubmissionPopup from "./editor/SubmissionPopup";
+import SubmissionPopup from "../Editor/SubmissionPopup";
 
 interface SubmissionsForProblemProps {
   problemId: string;

@@ -72,6 +72,7 @@ export default function CreateListModal({
         }
       }
     } catch (err) {
+      console.log(err);
       toast.error("An unexpected error occurred");
     } finally {
       setLoading(false);

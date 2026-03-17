@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { SubmissionsForProblem } from "@/components/SubmissionsForProblem";
+import { SubmissionsForProblem } from "@/components/Problems/SubmissionsForProblem";
 import Link from "next/link";
 
 // --- Types ---

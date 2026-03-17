@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, EyeOff, Trash2, Plus, Loader2, Beaker } from "lucide-react";
 
 // Components
-import { FormSection } from "@/components/admin/FormSection";
+import { FormSection } from "@/components/Admin/FormSection";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";

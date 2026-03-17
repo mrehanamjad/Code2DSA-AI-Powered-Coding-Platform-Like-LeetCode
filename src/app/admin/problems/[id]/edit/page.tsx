@@ -7,9 +7,9 @@ import {
   FormInput, Loader2, RotateCcw, Wand2
 } from "lucide-react";
 
-import { FormSection } from "@/components/admin/FormSection";
-import { TagInput } from "@/components/admin/TagInput";
-import { CodeEditor } from "@/components/admin/CodeEditor";
+import { FormSection } from "@/components/Admin/FormSection";
+import { TagInput } from "@/components/Admin/TagInput";
+import { CodeEditor } from "@/components/Admin/CodeEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

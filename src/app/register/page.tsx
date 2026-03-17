@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TerminalInput } from "@/components/AuthComponents/TerminalInput";
+import { TerminalInput } from "@/components/Auth/TerminalInput";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

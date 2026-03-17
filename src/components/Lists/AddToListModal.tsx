@@ -85,6 +85,7 @@ export default function AddToListModal({ problemId, triggerVariant = "button" }:
         }
       }
     } catch (err) {
+      console.log(err);
       toast.error("An unexpected error occurred");
     } finally {
       setAddingToListId(null);
@@ -125,6 +126,7 @@ export default function AddToListModal({ problemId, triggerVariant = "button" }:
         toast.error(createRes.error || "Failed to create list");
       }
     } catch (err) {
+      console.log(err);
       toast.error("An unexpected error occurred");
     } finally {
       setCreatingLoading(false);
