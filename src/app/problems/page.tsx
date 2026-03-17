@@ -5,6 +5,7 @@ import FilterToggleWrapper from "@/components/FilterToggleWrapper"; // New small
 import { ProblemI } from "@/models/problem.model";
 import { SortSelect } from "@/components/SortSelect";
 import PaginationControls from "@/components/PaginationControls";
+import mongoose from "mongoose";
 
 // Force dynamic rendering if your API is not static,
 // though searchParams usually forces dynamic anyway in Next 15.
@@ -43,8 +44,10 @@ async function getProblems(searchParams: {
     });
 
     if (!res.ok) throw new Error("Failed to fetch problems");
+    const data = await res.json()
+    console.log("res",data);
 
-    return res.json() as Promise<ProblemResponse>;
+    return data as Promise<ProblemResponse>;
   } catch (error) {
     console.error(error);
     return { problems: [], total: 0, page: 1, totalPages: 1 };
@@ -110,7 +113,16 @@ export default async function ProblemsPage({ searchParams }: PageProps) {
             </div>
           </div>
 
-          <ProblemTable problems={data.problems} />
+          <ProblemTable problems={
+            data.problems.map((problem) => ({
+              _id: problem._id as string,
+              title: problem.title,
+              difficulty: problem.difficulty,
+              topics: problem.topics,
+              problemId: problem.problemId,
+              // status: problem.status,  
+            }))
+            } />
 
           {/* Pagination Controls */}
           <div className="mt-8">

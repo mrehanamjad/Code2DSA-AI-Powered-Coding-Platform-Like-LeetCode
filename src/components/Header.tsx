@@ -11,6 +11,7 @@ import {
   Loader2,
   Home,
   Code,
+  List,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./ThemeToggle";
@@ -60,6 +61,14 @@ const Header = () => {
             >
               Problems
             </Link>
+            {session?.user && (
+              <Link
+                href="/lists"
+                className="text-sm font-medium transition-smooth hover:text-primary"
+              >
+                My Lists
+              </Link>
+            )}
           </nav>
 
           {/* Actions */}
@@ -207,6 +216,16 @@ const Header = () => {
           <Code className="h-5 w-5" />
           <span>Problems</span>
         </Link>
+        {session?.user && (
+          <Link
+            href="/lists"
+            onClick={() => setIsMenuOpen(false)}
+            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
+          >
+            <List className="h-5 w-5" />
+            <span>My Lists</span>
+          </Link>
+        )}
       </div>
 
       {session?.user ? (

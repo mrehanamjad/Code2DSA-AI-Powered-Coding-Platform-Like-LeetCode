@@ -34,7 +34,6 @@ export interface ProblemI extends Document {
   title: string;
   difficulty: "Easy" | "Medium" | "Hard";
   topics: string[];
-  status: "Not Started" | "In Progress" | "Completed";
   function: FunctionI;
   description: string;
   examples: ExampleI[];

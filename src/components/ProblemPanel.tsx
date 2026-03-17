@@ -13,6 +13,7 @@ import {
 import { ProblemI } from "@/models/problem.model";
 import { SubmissionsForProblem } from "./SubmissionsForProblem";
 import DifficultyBadge from "./DifficultyBadge";
+import AddToListModal from "./lists/AddToListModal";
 
 interface ProblemPanelProps {
   selectedProblem: ProblemI;
@@ -25,14 +26,21 @@ export function ProblemPanel({
     <div className="flex flex-col h-full">
 
       <div className="flex-1 overflow-y-auto">
-        <div className="flex items-center gap-2 p-4 pb-0">
-          <h1 className="text-2xl font-bold text-foreground">
-            {selectedProblem && selectedProblem.title || "title"}
-          </h1>
-          <DifficultyBadge difficulty={selectedProblem && selectedProblem.difficulty} />
+        <div className="flex items-center justify-between p-4 pb-0 max-w-full">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <h1 className="text-2xl font-bold text-foreground truncate">
+              {selectedProblem?.title || "title"}
+            </h1>
+            <DifficultyBadge difficulty={selectedProblem?.difficulty as "Easy" | "Medium" | "Hard"} />
+          </div>
+          <div className="flex-shrink-0 ml-2">
+            {selectedProblem?._id ? (
+               <AddToListModal problemId={String(selectedProblem._id)} />
+            ) : null}
+          </div>
         </div>
 
-        <Tabs defaultValue="description" className="w-full">
+        <Tabs defaultValue="description" className="w-full mt-4">
           <TabsList className="w-full justify-start rounded-none border-b px-4">
             <TabsTrigger value="description">Description</TabsTrigger>
             <TabsTrigger value="solutions">Solutions</TabsTrigger>

@@ -29,23 +29,18 @@ export async function PATCH(request: Request) {
 
     const { currentPassword, newPassword } = parseResult.data;
 
-    // 1. Fetch user including password field
     const user = await User.findById(session.user.id);
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // 2. Verify Current Password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
 
     if (!isMatch) {
       return NextResponse.json({ error: "Incorrect current password" }, { status: 403 });
     }
 
-    // 3. Update Password
-    // IMPORTANT: We assign the PLAIN TEXT password here.
-    // Your UserSchema.pre('save') hook will detect the modification and hash it.
     user.password = newPassword;
     await user.save();
 

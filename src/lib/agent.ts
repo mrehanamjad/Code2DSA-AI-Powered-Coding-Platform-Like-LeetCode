@@ -1,10 +1,6 @@
-// In your main application file (e.g., index.ts)
 import { OpenAI } from "openai";
 import { OpenAIChatCompletionsModel, Agent, Runner } from "@openai/agents";
-// import * as dotenv from 'dotenv';
 
-// Load environment variables
-// dotenv.config();
 
 const geminiApiKey = process.env.GEMINI_API_KEY;
 

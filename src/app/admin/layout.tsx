@@ -11,7 +11,6 @@ export default async function AdminLayout({
 
   return (
     <>
-      {/* Devicon icon font (only needed for admin pages) */}
       <Script
         src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
         strategy="beforeInteractive"

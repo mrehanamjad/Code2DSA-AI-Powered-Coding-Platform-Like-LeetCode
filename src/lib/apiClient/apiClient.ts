@@ -111,17 +111,71 @@ class ApiClient {
     });
   }
 
+  // ------------------------
+  // Problem Lists Endpoints
+  // ------------------------
 
-  //   async editVideo(id: string, data: { title?: string; description?: string }) {
-  //     return await this.myFetch(`/videos/${id}/edit`, {
-  //       method: "PATCH",
-  //       body: data,
-  //     });
-  //   }
+  async getLists() {
+    return this.request<{ lists: import("@/models/problemList.model").ProblemListI[] }>("/lists");
+  }
 
-  //   async deleteVideo(id: string) {
-  //     return await this.myFetch(`/videos/${id}/delete`, { method: "DELETE" });
-  //   }
+  async createList(data: { title: string; description?: string; isPublic?: boolean }) {
+    return this.request<{ message: string; list: import("@/models/problemList.model").ProblemListI }>("/lists", {
+      method: "POST",
+      body: data,
+    });
+  }
+
+  async getListById(listId: string, page = 1, limit = 10) {
+    return this.request<{
+      list: import("@/models/problemList.model").ProblemListI;
+      problems: import("./types").PaginatedListProblems;
+    }>(`/lists/${listId}?page=${page}&limit=${limit}`);
+  }
+
+  async updateList(listId: string, data: Partial<import("@/models/problemList.model").ProblemListI>) {
+    return this.request<{ message: string; list: import("@/models/problemList.model").ProblemListI }>(`/lists/${listId}`, {
+      method: "PATCH",
+      body: data,
+    });
+  }
+
+  async reorderProblems(listId: string, updates: { problemId: string; order: number }[]) {
+    return this.request<{ message: string }>(`/lists/${listId}/reorder`, {
+      method: "PATCH",
+      body: { updates },
+    });
+  }
+
+  async deleteList(listId: string) {
+    return this.request<{ message: string }>(`/lists/${listId}`, {
+      method: "DELETE",
+    });
+  }
+
+  async addProblemToList(listId: string, problemId: string) {
+    return this.request<{ message: string; entry: import("@/models/listProblem.model").ListProblemI }>(`/lists/${listId}/problems`, {
+      method: "POST",
+      body: { problemId },
+    });
+  }
+
+  async removeProblemFromList(listId: string, problemId: string) {
+    return this.request<{ message: string }>(`/lists/${listId}/problems/${problemId}`, {
+      method: "DELETE",
+    });
+  }
+
+  async reorderListProblems(listId: string, updates: { problemId: string; order: number }[]) {
+    return this.request<{ message: string; result: unknown }>(`/lists/${listId}/reorder`, {
+      method: "PATCH",
+      body: { updates },
+    });
+  }
+
+  async checkProblemInLists(problemId: string) {
+    return this.request<{ listIds: string[] }>(`/lists/check/${problemId}`);
+  }
 }
 
 export const apiClient = new ApiClient();

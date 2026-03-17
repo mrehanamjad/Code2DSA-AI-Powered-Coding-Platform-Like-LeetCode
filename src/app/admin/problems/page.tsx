@@ -11,13 +11,13 @@ import { toast } from "sonner";
 import ProblemTable from "@/components/ProblemTable";
 
 
-import { ProblemI } from "@/models/problem.model";
+import { ProblemForTableI } from "@/components/ProblemTable";
 
 export default function ProblemsPage() {
   const router = useRouter();
   
   // State
-  const [problems, setProblems] = useState<ProblemI[]>([]);
+  const [problems, setProblems] = useState<ProblemForTableI[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
