@@ -31,13 +31,15 @@ export default withAuth(
       authorized: ({ token, req }) => {
         const { pathname } = req.nextUrl;
 
-        // 1. Public pages — no token required
+        // 1. Public pages & explicit asset paths — no token required
         if (
           pathname === "/" ||
           pathname === "/login" ||
           pathname === "/register" ||
           pathname.startsWith("/problems") ||
-          pathname.startsWith("/u")
+          pathname.startsWith("/u") ||
+          pathname.startsWith("/images") || 
+          pathname.startsWith("/lists/") 
         ) {
           return true;
         }
@@ -59,12 +61,14 @@ export const config = {
   matcher: [
     /*
      * Run middleware on all paths EXCEPT:
-     * - /api/*          (API routes handle their own auth server-side)
+     * - /api/* (API routes)
      * - /_next/static   (static assets)
-     * - /_next/image    (image optimisation)
-     * - /favicon.ico
-     * - /public/*       (public static files)
+     * - /_next/image    (Next.js local image optimization)
+     * - /_vercel        (Vercel edge image optimization)
+     * - /favicon.ico    (favicon)
+     * - /images         (your custom public images folder)
+     * - .*\\..* (ANY file with an extension, e.g., .png, .jpg, .svg)
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|public/).*)",
+    "/((?!api|_next/static|_next/image|_vercel|favicon.ico|images|.*\\..*).*)",
   ],
 };

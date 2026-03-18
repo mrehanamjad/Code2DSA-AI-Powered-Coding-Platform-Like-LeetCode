@@ -154,6 +154,17 @@
   ::-webkit-scrollbar-thumb          { background: oklch(0.80 0.01 240); border-radius: 99px; }
   ::-webkit-scrollbar-thumb:hover    { background: oklch(0.42 0.14 155 / 60%); }
 
+
+   /* Selection highlight */
+  ::selection {
+    background: oklch(0.42 0.14 155 / 25%);
+    color: inherit;
+  }
+  .dark ::selection {
+    background: oklch(0.82 0.15 155 / 25%);
+  }
+
+
 }
 
 /* login pg  */

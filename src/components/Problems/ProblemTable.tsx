@@ -3,7 +3,6 @@
 
 import React from "react";
 import BaseProblemRow, { NormalizedProblem } from "./BaseProblemRow"; // Adjust import path
-import ProblemTableHeader from "./ProblemTableHeader"; // Adjust import path
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -50,7 +49,7 @@ const ProblemTable = ({ problems, admin = false, onDelete }: ProblemTableProps) 
 
   return (
     <div className="w-full bg-card rounded-xl border shadow-sm overflow-hidden">
-      <ProblemTableHeader hasActions={true} />
+      {/* <ProblemTableHeader hasActions={true} /> */}
       
       <div className="divide-y divide-border">
         {problems.map((problem) => (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "@/lib/apiClient/apiClient";
 import Container from "@/components/Container";
 import { Loader2, Trash2, Lock, Globe, AlertTriangle, Home, LayoutList } from "lucide-react";
@@ -40,7 +40,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import PaginationControls from "@/components/PaginationControls";
 import CreateListModal from "@/components/Lists/CreateListModal";
-import ProblemTableHeader from "@/components/Problems/ProblemTableHeader";
 import { SharePageButton } from "@/components/Lists/SharePageButton";
 
 type Props = {
@@ -84,57 +83,57 @@ export default function ListDetailPage({ params, searchParams }: Props) {
     });
   }, [params, searchParams]);
 
-  useEffect(() => {
-    if (listId) {
-      fetchListDetails(page);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listId, page, session?.user?.id]); // Re-fetch if auth state changes
 
+const fetchListDetails = useCallback(async (page: number) => {
+  setLoading(true);
+  setError(null);
+  setIsPrivate(false);
 
-  const fetchListDetails = async (page: number) => {
-    setLoading(true);
-    setError(null);
-    setIsPrivate(false); // Reset on new fetch
+  try {
+    const res = await apiClient.getListById(listId, page, 10);
 
-    try {
-      const res = await apiClient.getListById(listId, page, 10);
-
-      if (res.success && res.data) {
-        setList(res.data.list);
-        setProblemsData(res.data.problems);
+    if (res.success && res.data) {
+      setList(res.data.list);
+      setProblemsData(res.data.problems);
+    } else {
+      if (res.status === 403) {
+        setIsPrivate(true);
       } else {
-        // Catch the 403 specifically
-        if (res.status === 403) {
-          setIsPrivate(true);
-        } else {
-          setError(res.error || "Failed to load list details");
-        }
+        setError(res.error || "Failed to load list details");
       }
-    } catch (err: unknown) {
-      console.error(err);
-      setError("An unexpected error occurred.");
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (err: unknown) {
+    console.error(err);
+    setError("An unexpected error occurred.");
+  } finally {
+    setLoading(false);
+  }
+}, [listId]);
 
-  const handleDeleteList = async () => {
-    try {
-      const res = await apiClient.deleteList(listId);
-      if (res.success) {
-        toast.success("List deleted successfully");
-        router.push("/lists");
-      } else {
-        toast.error(res.error || "Failed to delete list");
-      }
-    } catch (err: unknown) {
-      console.error(err);
-      toast.error("Error deleting list");
+useEffect(() => {
+  if (listId) {
+    fetchListDetails(page);
+  }
+}, [listId, page, fetchListDetails]);
+
+
+const handleDeleteList = useCallback(async () => {
+  try {
+    const res = await apiClient.deleteList(listId);
+    if (res.success) {
+      toast.success("List deleted successfully");
+      router.push("/lists");
+    } else {
+      toast.error(res.error || "Failed to delete list");
     }
-  };
+  } catch (err: unknown) {
+    console.error(err);
+    toast.error("Error deleting list");
+  }
+}, [listId, router]);
 
-  const handleRemoveProblem = async (e: React.MouseEvent, problemId: string) => {
+const handleRemoveProblem = useCallback(
+  async (e: React.MouseEvent, problemId: string) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -142,7 +141,7 @@ export default function ListDetailPage({ params, searchParams }: Props) {
       const res = await apiClient.removeProblemFromList(listId, problemId);
       if (res.success) {
         toast.success("Problem removed from list");
-        fetchListDetails(page); // Refresh current page
+        fetchListDetails(page);
       } else {
         toast.error(res.error || "Failed to remove problem");
       }
@@ -150,7 +149,9 @@ export default function ListDetailPage({ params, searchParams }: Props) {
       console.error(err);
       toast.error("Error removing problem");
     }
-  };
+  },
+  [listId, page, fetchListDetails]
+);
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -202,6 +203,10 @@ export default function ListDetailPage({ params, searchParams }: Props) {
       fetchListDetails(page);
     }
   };
+
+  const handleRefresh = useCallback(() => {
+  fetchListDetails(page);
+}, [fetchListDetails, page]);
 
   if (loading && !list) {
     return (
@@ -288,7 +293,7 @@ if (isPrivate) {
 
           {isOwner && (
             <div className="flex gap-3 mt-4 md:mt-0 ">
-              <SharePageButton listName={list.title} isPublic={list.isPublic} listId={listId} listDescription={list.description} onUpdateSuccess={() => fetchListDetails(page)} />
+              <SharePageButton listName={list.title} isPublic={list.isPublic} listId={listId} listDescription={list.description} onUpdateSuccess={handleRefresh} />
               <CreateListModal
                 mode="edit"
                 listId={listId}
@@ -297,7 +302,7 @@ if (isPrivate) {
                   description: list.description,
                   isPublic: list.isPublic
                 }}
-                onSuccess={() => fetchListDetails(page)}
+                onSuccess={handleRefresh}
               />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -334,9 +339,6 @@ if (isPrivate) {
         ) : (
           <div className="space-y-6">
             <div className="w-full bg-card rounded-xl border shadow-sm overflow-hidden">
-              {/* Table Header */}
-              <ProblemTableHeader hasActions={isOwner} />
-
               {/* Table Body */}
               <DndContext
                 sensors={sensors}
