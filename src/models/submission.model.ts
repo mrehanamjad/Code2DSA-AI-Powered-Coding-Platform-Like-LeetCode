@@ -52,7 +52,6 @@ const SubmissionSchema = new Schema<SubmissionI>(
       type: Schema.Types.ObjectId,
       required: true,
       ref: "User",
-      index: true,
     },
     code: { type: String, required: true },
     language: {
