@@ -4,6 +4,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Trash2 } from "lucide-react";
 import { PaginatedListProblems } from "@/lib/apiClient/types";
 import BaseProblemRow, { NormalizedProblem } from "@/components/Problems/BaseProblemRow";
+import { Status } from "../StatusIcon";
 
 type ProblemItem = PaginatedListProblems["docs"][0];
 
@@ -24,12 +25,8 @@ export default function SortableProblemRow({ problem, isOwner, onRemove }: Sorta
 
   // Map the nested API data to our normalized structure
   const normalizedProblem: NormalizedProblem = {
-    _id: problem.problemDetails._id,
-    problemId: problem.problemDetails.problemId,
-    title: problem.problemDetails.title,
-    difficulty: problem.problemDetails.difficulty,
-    topics: problem.problemDetails.topics,
-    status: problem.problemDetails.status,
+    ...problem.problemDetails,
+    status: problem.problemDetails.status as Status,
   };
 
   return (

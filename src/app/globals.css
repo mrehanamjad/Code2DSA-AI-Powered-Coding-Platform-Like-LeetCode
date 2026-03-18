@@ -33,6 +33,8 @@
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-primary2: var(--primary2);
+  --color-primary2-foreground: var(--primary2-foreground);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -54,9 +56,12 @@
   --popover: oklch(0.99 0 0);
   --popover-foreground: oklch(0.145 0 0);
 
-  /* Make Primary less "stark black" */
-  --primary: oklch(0.35 0.02 240);
-  --primary-foreground: oklch(0.985 0 0);
+  /* Brand — forest green, passes contrast on white */
+  --primary:            oklch(0.42 0.14 155);    /* green-700 equivalent */
+  --primary-foreground: oklch(0.99 0 0);
+
+   --primary2: oklch(0.35 0.02 240);
+  --primary2-foreground: oklch(0.985 0 0);
   
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -96,8 +101,13 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+   /* Brand — mint green, glows on dark */
+  --primary:            oklch(0.82 0.15 155);    /* #7EE8A2 equivalent */
+  --primary-foreground: oklch(0.11 0.006 240);   /* dark text on mint */
+
+  --primary2: oklch(0.922 0 0);
+  --primary2-foreground: oklch(0.205 0 0);
+
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -121,6 +131,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
 }
 
 @layer base {
@@ -130,6 +141,19 @@
   body {
     @apply bg-background text-foreground;
   }
+
+   /* Scrollbar — dark mode */
+  .dark ::-webkit-scrollbar          { width: 6px; height: 6px; }
+  .dark ::-webkit-scrollbar-track    { background: transparent; }
+  .dark ::-webkit-scrollbar-thumb    { background: oklch(0.28 0.007 240); border-radius: 99px; }
+  .dark ::-webkit-scrollbar-thumb:hover { background: oklch(0.82 0.15 155 / 60%); }
+ 
+  /* Scrollbar — light mode */
+  ::-webkit-scrollbar                { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track          { background: transparent; }
+  ::-webkit-scrollbar-thumb          { background: oklch(0.80 0.01 240); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover    { background: oklch(0.42 0.14 155 / 60%); }
+
 }
 
 /* login pg  */

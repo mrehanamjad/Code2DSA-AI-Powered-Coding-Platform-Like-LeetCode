@@ -61,71 +61,67 @@ export async function GET(req: NextRequest) {
 
     pipeline.push({ $match: matchStage });
 
-    // --- B. Lookup & Status Enrichment (If User Authenticated) ---
-    if (userId) {
-      pipeline.push(
-        // 1. Join with Submissions to find user's history for these problems
-        {
-          $lookup: {
-            from: "submissions",
-            let: { problemId: "$_id" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ["$problemId", "$$problemId"] },
-                      { $eq: ["$userId", new mongoose.Types.ObjectId(userId)] },
-                    ],
-                  },
-                },
+// --- B. Lookup & Status Enrichment (If User Authenticated) ---
+if (userId) {
+  pipeline.push(
+    {
+      $lookup: {
+        from: "submissions", // Ensure this matches your actual MongoDB collection name
+        let: { probId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$problemId", "$$probId"] },
+                  { $eq: ["$userId", new mongoose.Types.ObjectId(userId)] },
+                ],
               },
-              { $project: { status: 1, _id: 0 } },
-            ],
-            as: "userSubmissions",
+            },
           },
-        },
-        // 2. Calculate 'status' field based on submissions
-        {
-          $addFields: {
-            status: {
-              $cond: {
-                if: {
-                  // Check if ANY submission is 'success'
-                  $gt: [
-                    {
-                      $size: {
-                        $filter: {
-                          input: "$userSubmissions",
-                          as: "sub",
-                          cond: { $eq: ["$$sub.status", "success"] },
-                        },
-                      },
+          { $project: { status: 1, _id: 0 } },
+        ],
+        as: "userSubmissions",
+      },
+    },
+    {
+      $addFields: {
+        status: {
+          $cond: {
+            if: {
+              // 1. Check if any submission has the status "accepted"
+              $gt: [
+                {
+                  $size: {
+                    $filter: {
+                      input: "$userSubmissions",
+                      as: "sub",
+                      cond: { $eq: ["$$sub.status", "accepted"] }, // Fixed: "success" -> "accepted"
                     },
-                    0,
-                  ],
-                },
-                then: "Solved",
-                else: {
-                  $cond: {
-                    // If any submissions exist but none are success -> Attempted
-                    if: { $gt: [{ $size: "$userSubmissions" }, 0] },
-                    then: "Attempted",
-                    else: "Unsolved",
                   },
                 },
+                0,
+              ],
+            },
+            then: "Solved",
+            else: {
+              $cond: {
+                // 2. If submissions exist but none are "accepted" -> "Attempted"
+                if: { $gt: [{ $size: "$userSubmissions" }, 0] },
+                then: "Attempted",
+                else: "Unsolved",
               },
             },
           },
         },
-        // 3. Clean up the joined array
-        { $project: { userSubmissions: 0 } }
-      );
-    } else {
-      // If not logged in, implicitly all are "Unsolved" (or generic)
-      // We add the field so the response structure is consistent
-      pipeline.push({ $addFields: { status: "Unsolved" } });
-    }
+      },
+    },
+    { $project: { userSubmissions: 0 } } // Clean up temp array
+  );
+} else {
+  // Always return "Unsolved" for non-logged-in users
+  pipeline.push({ $addFields: { status: "Unsolved" } });
+}
 
     // --- C. Match Stage (Status Filter) ---
     // This must run AFTER the lookup/addFields calculation
@@ -214,7 +210,6 @@ export async function GET(req: NextRequest) {
 
     // @ts-expect-error - to ignore error: 'Problem.aggregatePaginate' is of type 'unknown'.ts(18046)
     const result = await Problem.aggregatePaginate(myAggregate, options);
-
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
     console.error("GET /api/problems Error:", error);

@@ -96,6 +96,7 @@ const Settings = () => {
               <h2 className="text-xl font-semibold text-foreground">Profile</h2>
               <Button
                 onClick={() => setEditingField("profile")}
+                variant="outline"
               >
                 Edit Profile
               </Button>

@@ -5,7 +5,8 @@ import FilterToggleWrapper from "@/components/Problems/FilterToggleWrapper"; // 
 import { ProblemI } from "@/models/problem.model";
 import { SortSelect } from "@/components/Problems/SortSelect";
 import PaginationControls from "@/components/PaginationControls";
-import mongoose from "mongoose";
+import { headers } from "next/headers";
+import { Status } from "@/components/StatusIcon";
 
 // Force dynamic rendering if your API is not static,
 // though searchParams usually forces dynamic anyway in Next 15.
@@ -39,8 +40,14 @@ async function getProblems(searchParams: {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
   try {
+    const headersList = await headers();
+    const cookieHeader = headersList.get("cookie") || "";
+
     const res = await fetch(`${baseUrl}/api/problems?${query.toString()}`, {
       cache: "no-store", // Ensure fresh data on every request
+      headers: {
+        cookie: cookieHeader,
+      },
     });
 
     if (!res.ok) throw new Error("Failed to fetch problems");
@@ -114,13 +121,13 @@ export default async function ProblemsPage({ searchParams }: PageProps) {
           </div>
 
           <ProblemTable problems={
-            data.problems.map((problem) => ({
+            data.problems.map((problem:ProblemI & {status?: Status}) => ({
               _id: problem._id as string,
               title: problem.title,
               difficulty: problem.difficulty,
               topics: problem.topics,
               problemId: problem.problemId,
-              // status: problem.status,  
+              status: problem.status,  
             }))
             } />
 

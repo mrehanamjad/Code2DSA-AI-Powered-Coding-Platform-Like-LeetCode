@@ -11,6 +11,7 @@ import { Edit2, PlusCircle, Trash2 } from "lucide-react";
 import { apiClient } from "@/lib/apiClient/apiClient";
 import AddToListModal from "../Lists/AddToListModal";
 import { Difficulty } from "../DifficultyBadge";
+import { Status } from "../StatusIcon";
 
 export interface ProblemForTableI {
   _id: string;
@@ -18,7 +19,7 @@ export interface ProblemForTableI {
   title: string;
   difficulty: Difficulty;
   topics: string[];
-  status?: string ;
+  status?: Status;
 }
 
 interface ProblemTableProps {

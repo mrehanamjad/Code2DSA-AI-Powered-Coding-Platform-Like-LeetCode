@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import StatusIcon from "@/components/StatusIcon";
+import StatusIcon, { Status } from "@/components/StatusIcon";
 import DifficultyBadge, { Difficulty } from "@/components/DifficultyBadge";
 import { Badge } from "@/components/ui/badge";
 
@@ -11,7 +11,7 @@ export interface NormalizedProblem {
   title: string;
   difficulty: Difficulty | string;
   topics: string[];
-  status?: string;
+  status?: Status;
 }
 
 interface BaseProblemRowProps {

@@ -19,6 +19,9 @@ type Props = {
 export async function GET(req: NextRequest, { params }: Props) {
   try {
     const session = await getServerSession(AuthOptions);
+
+    const userId = session?.user ? session.user.id : null;
+
     await connectionToDatabase();
 
     const { listId } = await params;
@@ -27,6 +30,7 @@ export async function GET(req: NextRequest, { params }: Props) {
       return NextResponse.json({ error: "Invalid list ID" }, { status: 400 });
     }
 
+
     const list = await ProblemList.findById(listId);
 
     if (!list) {
@@ -34,7 +38,7 @@ export async function GET(req: NextRequest, { params }: Props) {
     }
 
     // Access control: allow if list is public or if the user is the owner
-    const isOwner = session?.user?.id === list.owner?.toString();
+    const isOwner = userId === list.owner?.toString();
     if (!list.isPublic && !isOwner) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
@@ -44,34 +48,99 @@ export async function GET(req: NextRequest, { params }: Props) {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
 
-    // Aggregation pipeline to fetch ordered problems for this list
-    const aggregateQuery = ListProblem.aggregate([
-      { $match: { listId: new mongoose.Types.ObjectId(listId) } },
-      {
-        $lookup: {
-          from: "problems",
-          localField: "problemId",
-          foreignField: "_id",
-          as: "problemDetails",
-        },
-      },
-      { $unwind: "$problemDetails" },
-      { $sort: { order: 1 } },
-      {
-        $project: {
-          _id: 1,
-          order: 1,
-          problemId: 1,
-          "problemDetails.problemId": 1,
-          "problemDetails.title": 1,
-          "problemDetails.difficulty": 1,
-          "problemDetails.topics": 1,
-          "problemDetails.status": 1,
-          "problemDetails._id": 1,
-        },
-      },
-    ]);
+const pipeline: mongoose.PipelineStage[] = [
+  { $match: { listId: new mongoose.Types.ObjectId(listId) } },
+  {
+    $lookup: {
+      from: "problems", 
+      localField: "problemId",
+      foreignField: "_id",
+      as: "problemDetails",
+    },
+  },
+  { $unwind: "$problemDetails" },
+];
 
+if (userId) {
+  pipeline.push(
+    {
+      $lookup: {
+        from: "submissions",
+        let: { probId: "$problemId" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$problemId", "$$probId"] },
+                  { $eq: ["$userId", new mongoose.Types.ObjectId(userId)] },
+                ],
+              },
+            },
+          },
+          { $project: { status: 1, _id: 0 } },
+        ],
+        as: "userSubmissions",
+      },
+    },
+    {
+      $addFields: {
+        // Use dot notation to put the status INSIDE problemDetails
+        "problemDetails.status": {
+          $cond: {
+            if: {
+              $gt: [
+                {
+                  $size: {
+                    $filter: {
+                      input: "$userSubmissions",
+                      as: "sub",
+                      cond: { $eq: ["$$sub.status", "accepted"] },
+                    },
+                  },
+                },
+                0,
+              ],
+            },
+            then: "Solved",
+            else: {
+              $cond: {
+                if: { $gt: [{ $size: "$userSubmissions" }, 0] },
+                then: "Attempted",
+                else: "Unsolved",
+              },
+            },
+          },
+        },
+      },
+    }
+  );
+} else {
+  // Hardcode Unsolved for guest users inside the object
+  pipeline.push({
+    $addFields: { "problemDetails.status": "Unsolved" },
+  });
+}
+
+// Final Sorting and Projection
+pipeline.push(
+  { $sort: { order: 1 } },
+  {
+    $project: {
+      _id: 1,
+      order: 1,
+      problemId: 1,
+      "problemDetails.problemId": 1,
+      "problemDetails.title": 1,
+      "problemDetails.difficulty": 1,
+      "problemDetails.topics": 1,
+      "problemDetails.status": 1, // Now included inside the object
+      "problemDetails._id": 1,
+    },
+  }
+);
+
+const aggregateQuery = ListProblem.aggregate(pipeline);
     // Apply pagination
     const options = {
       page,
@@ -83,9 +152,6 @@ export async function GET(req: NextRequest, { params }: Props) {
       aggregateQuery,
       options
     );
-
-    console.log("**** Fetched list ****", list);
-    console.log("**** Fetched problems ****", paginatedProblems);
 
     return NextResponse.json(
       {

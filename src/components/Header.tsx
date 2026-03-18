@@ -12,6 +12,7 @@ import {
   Home,
   Code,
   List,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./ThemeToggle";
@@ -35,8 +36,8 @@ const Header = () => {
   const { data: session, status } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  
-  if (pathname.split("/").length > 2 && pathname.includes("problems/") ) {
+
+  if (pathname.split("/").length > 2 && pathname.includes("problems/")) {
     return null;
   }
 
@@ -61,14 +62,23 @@ const Header = () => {
             >
               Problems
             </Link>
-            {session?.user && (
+
+            <Link
+              href={session?.user ? "/lists" : "/login"}
+              className="text-sm font-medium transition-smooth hover:text-primary"
+            >
+              My Lists
+            </Link>
+
+            {session?.user?.role === "admin" && (
               <Link
-                href="/lists"
+                href="/admin"
                 className="text-sm font-medium transition-smooth hover:text-primary"
               >
-                My Lists
+                Admin
               </Link>
             )}
+
           </nav>
 
           {/* Actions */}
@@ -81,7 +91,7 @@ const Header = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="hidden md:flex rounded-full hover:bg-secondary/80 transition-colors"
+                    className="hidden md:flex rounded-full bg-primary/50 hover:bg-primary/20 transition-colors"
                   >
                     <User className="h-5 w-5" />
                   </Button>
@@ -193,126 +203,137 @@ const Header = () => {
           </div>
         </div>
 
-{/* Mobile Navigation */}
-{isMenuOpen && (
-  <div className="md:hidden border-t bg-background/95 backdrop-blur-sm">
-    <nav className="flex flex-col p-4 pb-6 max-h-[calc(100vh-4rem)] overflow-y-auto">
-      {/* Main Navigation Links */}
-      <div className="flex flex-col gap-1 mb-3">
-        <Link
-          href="/"
-          onClick={() => setIsMenuOpen(false)}
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
-        >
-          <Home className="h-5 w-5" />
-          <span>Home</span>
-        </Link>
-        
-        <Link
-          href="/problems?page=1&sort=oldest"
-          onClick={() => setIsMenuOpen(false)}
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
-        >
-          <Code className="h-5 w-5" />
-          <span>Problems</span>
-        </Link>
-        {session?.user && (
-          <Link
-            href="/lists"
-            onClick={() => setIsMenuOpen(false)}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
-          >
-            <List className="h-5 w-5" />
-            <span>My Lists</span>
-          </Link>
-        )}
-      </div>
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <div className="md:hidden border-t bg-background/95 backdrop-blur-sm">
+            <nav className="flex flex-col p-4 pb-6 max-h-[calc(100vh-4rem)] overflow-y-auto">
+              {/* Main Navigation Links */}
+              <div className="flex flex-col gap-1 mb-3">
+                <Link
+                  href="/"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
+                >
+                  <Home className="h-5 w-5" />
+                  <span>Home</span>
+                </Link>
 
-      {session?.user ? (
-        <>
-          {/* User Info Card */}
-          <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background rounded-lg p-4 mb-3 border border-border/50">
-            <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center ring-2 ring-primary/30">
-                <User className="h-6 w-6 text-primary" />
-              </div>
-              <div className="flex flex-col">
-                <p className="text-sm font-semibold">
-                  {session.user.name || "User"}
-                </p>
-                {session.user.username && (
-                  <p className="text-xs text-muted-foreground">
-                    @{session.user.username}
-                  </p>
+                <Link
+                  href="/problems?page=1&sort=oldest"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
+                >
+                  <Code className="h-5 w-5" />
+                  <span>Problems</span>
+                </Link>
+
+                <Link
+                  href={session?.user ? "/lists" : "/login"}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
+                >
+                  <List className="h-5 w-5" />
+                  <span>My Lists</span>
+                </Link>
+
+                {session?.user?.role === "admin" && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
+                  >
+                    <Shield className="h-5 w-5" />
+                    <span>Admin</span>
+                  </Link>
                 )}
+
               </div>
-            </div>
+
+              {session?.user ? (
+                <>
+                  {/* User Info Card */}
+                  <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background rounded-lg p-4 mb-3 border border-border/50">
+                    <div className="flex items-center gap-3">
+                      <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center ring-2 ring-primary/30">
+                        <User className="h-6 w-6 text-primary" />
+                      </div>
+                      <div className="flex flex-col">
+                        <p className="text-sm font-semibold">
+                          {session.user.name || "User"}
+                        </p>
+                        {session.user.username && (
+                          <p className="text-xs text-muted-foreground">
+                            @{session.user.username}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Account Actions */}
+                  <div className="flex flex-col gap-1">
+                    <div className="text-xs font-semibold text-muted-foreground px-4 py-2">
+                      ACCOUNT
+                    </div>
+
+                    <Link
+                      href={`/u/${session.user.username}`}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-blue-500/10 hover:text-blue-600 active:scale-[0.98]"
+                    >
+                      <User className="h-5 w-5" />
+                      <span>View Profile</span>
+                    </Link>
+
+                    <Link
+                      href="/progress"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-green-500/10 hover:text-green-600 active:scale-[0.98]"
+                    >
+                      <TrendingUp className="h-5 w-5" />
+                      <span>Progress</span>
+                    </Link>
+
+                    <Link
+                      href="/profile"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-purple-500/10 hover:text-purple-600 active:scale-[0.98]"
+                    >
+                      <Settings className="h-5 w-5" />
+                      <span>Settings</span>
+                    </Link>
+
+                    {/* Divider */}
+                    <div className="my-2 border-t" />
+
+                    {/* Logout Button */}
+                    <button
+                      onClick={() => {
+                        signOut();
+                        setIsMenuOpen(false);
+                        router.push("/login");
+                      }}
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 transition-all hover:bg-red-50 dark:hover:bg-red-950/50 active:scale-[0.98]"
+                    >
+                      <LogOut className="h-5 w-5" />
+                      <span>Log out</span>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                /* Sign In Button for logged out users */
+                <div className="mt-auto pt-4">
+                  <Button
+                    className="w-full h-12 text-base font-medium shadow-lg"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Sign In
+                  </Button>
+                </div>
+              )}
+            </nav>
           </div>
-
-          {/* Account Actions */}
-          <div className="flex flex-col gap-1">
-            <div className="text-xs font-semibold text-muted-foreground px-4 py-2">
-              ACCOUNT
-            </div>
-            
-            <Link
-              href={`/u/${session.user.username}`}
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-blue-500/10 hover:text-blue-600 active:scale-[0.98]"
-            >
-              <User className="h-5 w-5" />
-              <span>View Profile</span>
-            </Link>
-
-            <Link
-              href="/progress"
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-green-500/10 hover:text-green-600 active:scale-[0.98]"
-            >
-              <TrendingUp className="h-5 w-5" />
-              <span>Progress</span>
-            </Link>
-            
-            <Link
-              href="/profile"
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-purple-500/10 hover:text-purple-600 active:scale-[0.98]"
-            >
-              <Settings className="h-5 w-5" />
-              <span>Settings</span>
-            </Link>
-
-            {/* Divider */}
-            <div className="my-2 border-t" />
-            
-            {/* Logout Button */}
-            <button
-              onClick={() => {
-                signOut();
-                setIsMenuOpen(false);
-                router.push("/login");
-              }}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 transition-all hover:bg-red-50 dark:hover:bg-red-950/50 active:scale-[0.98]"
-            >
-              <LogOut className="h-5 w-5" />
-              <span>Log out</span>
-            </button>
-          </div>
-        </>
-      ) : (
-        /* Sign In Button for logged out users */
-        <div className="mt-auto pt-4">
-          <Button 
-            className="w-full h-12 text-base font-medium shadow-lg"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Sign In
-          </Button>
-        </div>
-      )}
-    </nav>
-  </div>
-)}
+        )}
       </Container>
     </header>
   );

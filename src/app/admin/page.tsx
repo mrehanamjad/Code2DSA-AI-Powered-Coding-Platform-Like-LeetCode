@@ -65,6 +65,7 @@ export default function AdminDashboard() {
         setStats(data.stats);
         setRecentActivity(data.recentSubmissions);
       } catch (error) {
+        console.error(error);
         toast.error("Could not load dashboard information.");
       } finally {
         setIsLoading(false);

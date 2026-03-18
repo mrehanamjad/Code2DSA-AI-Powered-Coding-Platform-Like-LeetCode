@@ -42,7 +42,7 @@ Code2DSA is a full-stack, AI-powered coding platform designed to help developers
 
 ---
 
-### 📚 Custom Problem Lists (🔥 New)
+### 📚 Custom Problem Lists 
 - Create your own problem lists
 - Add/remove problems to lists
 - Drag & drop reordering of problems
@@ -51,7 +51,7 @@ Code2DSA is a full-stack, AI-powered coding platform designed to help developers
 
 ---
 
-### 🛠 Admin Dashboard (🔥 New)
+### 🛠 Admin Dashboard 
 - Create, edit, and manage problems
 - Add test cases, constraints, and metadata
 - Manage difficulty, topics, and tags
@@ -104,7 +104,7 @@ https://code2dsa.vercel.app
 ```bash
 git clone https://github.com/mrehanamjad/Code2DSA-AI-Powered-Coding-Platform-Like-LeetCode.gitgit
 cd Code2DSA-AI-Powered-Coding-Platform-Like-LeetCode
-````
+````  
 
 ### 2. Install dependencies
 

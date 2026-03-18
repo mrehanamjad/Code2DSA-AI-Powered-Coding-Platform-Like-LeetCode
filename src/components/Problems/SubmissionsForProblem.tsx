@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { apiClient } from "@/lib/apiClient/apiClient";
-import { Loader2, FilePenLine, Plus, X, ArrowUpRight, Clock, MemoryStick } from "lucide-react";
+import { Loader2, FilePenLine, Plus, X,  Clock, MemoryStick } from "lucide-react";
 import Note from "../Editor/Note";
 import { SubmissionForProblemI } from "@/lib/apiClient/types";
 import SubmissionPopup from "../Editor/SubmissionPopup";
@@ -106,7 +106,7 @@ export function SubmissionsForProblem({ problemId, isEditor = true }: Submission
     return `${(bytes / 1024).toFixed(1)} KB`;
   };
 
- 
+
 
   return (
     <>
@@ -119,7 +119,6 @@ export function SubmissionsForProblem({ problemId, isEditor = true }: Submission
           <table className="w-full text-sm text-left min-w-[600px]">
             <thead className="bg-muted/50 text-muted-foreground border-b">
               <tr>
-                <th className="h-10 px-4 font-medium whitespace-nowrap"></th>
                 <th className="h-10 px-4 font-medium whitespace-nowrap">Status</th>
                 <th className="h-10 px-4 font-medium whitespace-nowrap">Language</th>
                 <th className="h-10 px-4 font-medium whitespace-nowrap">Runtime</th>
@@ -131,14 +130,14 @@ export function SubmissionsForProblem({ problemId, isEditor = true }: Submission
             <tbody>
               {submissions.map((sub) => (
                 <tr
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    openSubmissionModal(sub._id.toString())
+                  }}
                   key={sub._id.toString()}
                   className="border-b transition-colors hover:bg-muted/30"
                 >
-                  <td className="p-4">
-                    <button  onClick={() => openSubmissionModal(sub._id.toString())} >
-                    <ArrowUpRight className="w-4 h-4" />
-                    </button>
-                  </td>
                   <td className="p-4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getStatusColor(
@@ -183,7 +182,11 @@ export function SubmissionsForProblem({ problemId, isEditor = true }: Submission
                       </div>
                     ) : (
                       <button
-                        onClick={() => openNoteModal(sub._id.toString(), "")}
+                        onClick={(e) => {
+                          openNoteModal(sub._id.toString(), "")
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
                         className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
                       >
                         <Plus className="w-3 h-3" /> Add Note
@@ -217,13 +220,13 @@ export function SubmissionsForProblem({ problemId, isEditor = true }: Submission
               </button>
             </div>
 
-            
+
             <Note submissionId={currentSubmissionId!} savedNote={noteContent} closeNoteModal={closeNoteModal} setSubmissions={setSubmissions} />
           </Card>
         </div>
       )}
       {isSubmissionModelOpen && (
-        <SubmissionPopup 
+        <SubmissionPopup
           isEditor={isEditor}
           submissionId={currentSubmissionId!}
           closeModel={closeSubmissionModal}

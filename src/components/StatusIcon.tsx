@@ -3,7 +3,7 @@
 import { CheckCircle2, Circle, CircleDot } from "lucide-react";
 
 // Matches the API response types + allows string for flexibility
-type Status = "Solved" | "Attempted" | "Unsolved" | string;
+export type Status = "Solved" | "Attempted" | "Unsolved";
 
 interface StatusIconProps {
   status: Status;

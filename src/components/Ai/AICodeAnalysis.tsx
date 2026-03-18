@@ -81,7 +81,8 @@ export default function AICodeAnalysisModal({
           setIsOpen(true)
         }}
         className="cursor-pointer"
-      >
+        variant="primary2"
+        >
         <Sparkles className="h-5 w-5 group-hover:animate-pulse" />
         <span>AI Code Analyzer</span>
       </Button>
