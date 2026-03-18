@@ -19,7 +19,6 @@ type Props = {
 export async function PATCH(req: NextRequest, { params }: Props) {
   try {
 
-    console.log("**** Reorder request received ****");
 
     const session = await getServerSession(AuthOptions);
 
@@ -43,9 +42,7 @@ export async function PATCH(req: NextRequest, { params }: Props) {
         { status: 400 }
       );
     }
-
-    console.log("**** Updates received ****", updates);
-
+    
     // 1. Verify list exists and user owns it
     const list = await ProblemList.findById(listId);
 

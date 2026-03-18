@@ -51,7 +51,6 @@ export function AvatarSection({ avatar, onAvatarChange }: AvatarSectionProps) {
     
     setIsLoading(true);
     try {
-      console.log(avatar)
       // 1. Upload Logic (Assuming you have an upload route)
       // const formData = new FormData();
       // formData.append("file", fileInputRef.current?.files[0]);

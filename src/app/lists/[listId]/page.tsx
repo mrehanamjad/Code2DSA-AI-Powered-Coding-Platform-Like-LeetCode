@@ -223,7 +223,7 @@ if (isPrivate) {
         
         <h2 className="text-3xl font-bold mb-3 tracking-tight">This List is Private</h2>
         <p className="text-muted-foreground text-lg max-w-md mb-8">
-          You don't have permission to view this collection. It might be set to private by the owner.
+          You don&apos;t have permission to view this collection. It might be set to private by the owner.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">

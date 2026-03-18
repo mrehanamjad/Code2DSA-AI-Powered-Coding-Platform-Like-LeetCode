@@ -52,7 +52,6 @@ async function getProblems(searchParams: {
 
     if (!res.ok) throw new Error("Failed to fetch problems");
     const data = await res.json()
-    console.log("res",data);
 
     return data as Promise<ProblemResponse>;
   } catch (error) {

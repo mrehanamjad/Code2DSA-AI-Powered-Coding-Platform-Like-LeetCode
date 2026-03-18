@@ -179,7 +179,6 @@ export function EditorPanel({
         throw new Error(`HTTP error! status: ${response.status}`);
       const result = await response.json();
 
-      console.log("[EditorPanel] OneCompiler response:", result);
       // Use the actual compiler-reported timings (more accurate than client-side)
       const executionTime: number = result.executionTime ?? Math.round(performance.now() - startTime);
       const memoryUsed: number | undefined = result.memoryUsed ?? undefined;
