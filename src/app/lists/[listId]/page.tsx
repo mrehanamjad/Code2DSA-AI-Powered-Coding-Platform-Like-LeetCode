@@ -41,6 +41,7 @@ import {
 import PaginationControls from "@/components/PaginationControls";
 import CreateListModal from "@/components/Lists/CreateListModal";
 import { ShareListButton } from "@/components/Lists/ShareListButton";
+import { ProblemTableSkeleton } from "@/components/Skeletons/ProblemTableSkeleton";
 
 type Props = {
   params: Promise<{
@@ -165,15 +166,11 @@ const handleRemoveProblem = useCallback(
     const newIndex = problems.findIndex((p) => p._id === over.id);
 
     if (oldIndex === -1 || newIndex === -1) return;
-
     // Shift memory array via dnd-kit utility
     const newProblems = arrayMove(problems, oldIndex, newIndex);
-
     // Calculate global index offset for this page
     const baseOrder = ((problemsData.page || 1) - 1) * (problemsData.limit || 10);
-
     const updates: { problemId: string; order: number }[] = [];
-
     // Linearly assign correct order integers according to sequence index safely
     const orderedBatch = newProblems.map((prob, idx) => {
       // Create a definitive, globally unique order value instead of trusting raw arrays that might be 0 default
@@ -211,9 +208,36 @@ const handleRemoveProblem = useCallback(
   if (loading && !list) {
     return (
       <Container>
-        <div className="py-10 flex justify-center items-center min-h-[40vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="py-10 animate-pulse">
+        {/* Header Skeleton */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8 bg-card border rounded-xl p-6 shadow-sm">
+          <div className="flex-grow w-full">
+            {/* Title & Badge */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-9 bg-muted rounded-md w-3/4 md:w-1/3"></div>
+              <div className="h-6 w-16 bg-muted rounded-full"></div>
+            </div>
+            
+            {/* Description lines */}
+            <div className="space-y-2 mb-4">
+              <div className="h-5 bg-muted rounded-md w-full max-w-3xl"></div>
+              <div className="h-5 bg-muted rounded-md w-5/6 max-w-2xl"></div>
+            </div>
+            
+            {/* Date */}
+            <div className="h-4 bg-muted rounded-md w-40 mt-4"></div>
+          </div>
+
+          {/* Action Buttons Skeleton */}
+          <div className="flex gap-3 mt-4 md:mt-0 w-full md:w-auto">
+            <div className="h-10 w-24 bg-muted rounded-md"></div>
+            <div className="h-10 w-24 bg-muted rounded-md"></div>
+            <div className="h-10 w-28 bg-muted rounded-md"></div>
+          </div>
         </div>
+        {/* Problems List Skeleton */}
+        <ProblemTableSkeleton rowCount={5} />
+      </div>
       </Container>
     );
   }

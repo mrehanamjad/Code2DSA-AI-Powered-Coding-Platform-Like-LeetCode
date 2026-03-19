@@ -65,7 +65,7 @@ const Header = () => {
             </Link>
 
             <Link
-              href={session?.user ? "/lists" : "/login"}
+              href={"/lists"}
               className="text-sm font-medium transition-smooth hover:text-primary"
             >
               My Lists
@@ -181,7 +181,7 @@ const Header = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : status === "loading" ? (
-              <Button disabled>
+              <Button disabled className="max-sm:hidden">
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 Checking...
               </Button>
@@ -232,7 +232,7 @@ const Header = () => {
                 </Link>
 
                 <Link
-                  href={session?.user ? "/lists" : "/login"}
+                  href={"/lists"}
                   onClick={() => setIsMenuOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
                 >
