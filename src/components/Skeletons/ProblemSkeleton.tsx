@@ -45,11 +45,11 @@ export function ProblemSkeleton() {
         </div>
 
         {/* Right Panel (Chat/Console) */}
-        <div className="hidden md:flex w-[25%] flex-col p-4 gap-3">
+        {/* <div className="hidden md:flex w-[25%] flex-col p-4 gap-3">
           <div className="h-8 w-1/2 bg-muted animate-pulse rounded" />
           <div className="flex-1 bg-muted/20 animate-pulse rounded border border-border" />
           <div className="h-10 w-full bg-muted animate-pulse rounded" />
-        </div>
+        </div> */}
       </div>
     </div>
   );

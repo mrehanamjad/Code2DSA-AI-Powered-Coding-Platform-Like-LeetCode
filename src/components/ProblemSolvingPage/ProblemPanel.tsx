@@ -1,3 +1,4 @@
+// Remove "use client" from the top!
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import ReactMarkdown from "react-markdown";
@@ -10,7 +11,7 @@ import {
 import { ProblemI } from "@/models/problem.model";
 import { SubmissionsForProblem } from "../Problems/SubmissionsForProblem";
 import DifficultyBadge from "../DifficultyBadge";
-import AddToListModal from "../Lists/AddToListModal";
+import SaveToListButton from "./SaveToListButton";
 
 interface ProblemPanelProps {
   selectedProblem: ProblemI;
@@ -20,8 +21,7 @@ export function ProblemPanel({
   selectedProblem,
 }: ProblemPanelProps) {
   return (
-    <div className="flex flex-col h-full">
-
+    <div className="flex flex-col h-full relative">
       <div className="flex-1 overflow-y-auto">
         <div className="flex items-center justify-between p-4 pb-0 max-w-full">
           <div className="flex items-center gap-3 overflow-hidden">
@@ -30,18 +30,18 @@ export function ProblemPanel({
             </h1>
             <DifficultyBadge difficulty={selectedProblem?.difficulty as "Easy" | "Medium" | "Hard"} />
           </div>
+          
           <div className="flex-shrink-0 ml-2">
-            {selectedProblem?._id ? (
-               <AddToListModal problemId={String(selectedProblem._id)} />
-            ) : null}
+            <SaveToListButton problemId={String(selectedProblem._id) || ""} />
           </div>
         </div>
 
         <Tabs defaultValue="description" className="w-full mt-4">
           <TabsList className="w-full justify-start rounded-none border-b px-4">
             <TabsTrigger value="description">Description</TabsTrigger>
-            <TabsTrigger value="solutions">Solutions</TabsTrigger>
             <TabsTrigger value="submissions">Submissions</TabsTrigger>
+            <TabsTrigger value="solutions">Solutions</TabsTrigger>
+            <TabsTrigger value="editorial">Editorial</TabsTrigger>
           </TabsList>
 
           <TabsContent value="description" className="p-4 space-y-4">
@@ -116,8 +116,15 @@ export function ProblemPanel({
           <TabsContent value="solutions" className="p-4">
             <Card className="p-6 bg-card">
               <p className="text-muted-foreground text-center">
-                {/* Solutions will be available after you solve the problem. */}
                 Solutions coming soon...
+              </p>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="editorial" className="p-4">
+            <Card className="p-6 bg-card">
+              <p className="text-muted-foreground text-center">
+                Editorial coming soon...
               </p>
             </Card>
           </TabsContent>
@@ -130,4 +137,3 @@ export function ProblemPanel({
     </div>
   );
 }
-

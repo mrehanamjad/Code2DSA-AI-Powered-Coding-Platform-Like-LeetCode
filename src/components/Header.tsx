@@ -59,6 +59,7 @@ const Header = () => {
             <Link
               href="/problems?page=1&sort=oldest"
               className="text-sm font-medium transition-smooth hover:text-primary"
+              onMouseEnter={() => router.prefetch("/problems")}
             >
               Problems
             </Link>
@@ -74,6 +75,7 @@ const Header = () => {
               <Link
                 href="/admin"
                 className="text-sm font-medium transition-smooth hover:text-primary"
+                prefetch={false}
               >
                 Admin
               </Link>
@@ -129,6 +131,7 @@ const Header = () => {
                     {/* Profile Card */}
                     <Link
                       href={`/u/${session.user?.username}`}
+                      onMouseEnter={() => router.prefetch(`/u/${session.user?.username}`)}
                       className="group"
                     >
                       <DropdownMenuItem className="flex flex-col items-center justify-center gap-2 py-5 cursor-pointer text-center border border-border/50 rounded-lg hover:border-primary/50 hover:bg-primary/5 focus:bg-primary/5 transition-all duration-200 hover:shadow-sm">
@@ -220,6 +223,7 @@ const Header = () => {
 
                 <Link
                   href="/problems?page=1&sort=oldest"
+                  onMouseEnter={() => router.prefetch("/problems?page=1&sort=oldest")}
                   onClick={() => setIsMenuOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
                 >
@@ -239,6 +243,7 @@ const Header = () => {
                 {session?.user?.role === "admin" && (
                   <Link
                     href="/admin"
+                    prefetch={false}
                     onClick={() => setIsMenuOpen(false)}
                     className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-primary/10 hover:text-primary active:scale-[0.98]"
                   >
@@ -280,6 +285,7 @@ const Header = () => {
                       href={`/u/${session.user.username}`}
                       onClick={() => setIsMenuOpen(false)}
                       className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all hover:bg-blue-500/10 hover:text-blue-600 active:scale-[0.98]"
+                      onMouseEnter={() => router.prefetch(`/u/${session.user?.username}`)}
                     >
                       <User className="h-5 w-5" />
                       <span>View Profile</span>

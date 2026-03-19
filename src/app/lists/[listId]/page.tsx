@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import PaginationControls from "@/components/PaginationControls";
 import CreateListModal from "@/components/Lists/CreateListModal";
-import { SharePageButton } from "@/components/Lists/SharePageButton";
+import { ShareListButton } from "@/components/Lists/ShareListButton";
 
 type Props = {
   params: Promise<{
@@ -293,7 +293,7 @@ if (isPrivate) {
 
           {isOwner && (
             <div className="flex gap-3 mt-4 md:mt-0 ">
-              <SharePageButton listName={list.title} isPublic={list.isPublic} listId={listId} listDescription={list.description} onUpdateSuccess={handleRefresh} />
+              <ShareListButton listName={list.title} isPublic={list.isPublic} listId={listId} listDescription={list.description} onUpdateSuccess={handleRefresh} />
               <CreateListModal
                 mode="edit"
                 listId={listId}

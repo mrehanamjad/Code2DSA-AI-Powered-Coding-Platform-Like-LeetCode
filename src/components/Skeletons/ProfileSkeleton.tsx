@@ -2,13 +2,13 @@ import React from 'react';
 
 const ProfileSkeleton = () => {
   return (
-    <div className="min-h-screen bg-[#0E0E10] p-6 text-white font-sans">
+    <div className="min-h-screen p-6 text-white font-sans">
       <div className="max-w-[1400px] mx-auto space-y-6 animate-pulse">
         
         {/* --- Hero Section --- */}
-        <div className="w-full bg-[#18181B] border border-[#27272A] rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6">
+        <div className="w-full bg-card border border-border rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6">
           {/* Avatar Skeleton */}
-          <div className="h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-[#27272A] flex-shrink-0" />
+          <div className="h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-muted flex-shrink-0" />
           
           {/* User Info Skeleton */}
           <div className="flex-1 space-y-4 w-full text-center sm:text-left">
@@ -46,7 +46,7 @@ const ProfileSkeleton = () => {
             {/* Top Row Stats (4 cards) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="bg-[#18181B] border border-[#27272A] rounded-2xl p-5 flex flex-col justify-between h-32">
+                <div key={i} className="bg-card border border-[#27272A] rounded-2xl p-5 flex flex-col justify-between h-32">
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">
                       <div className="h-3 w-20 bg-[#27272A] rounded" />
@@ -63,14 +63,14 @@ const ProfileSkeleton = () => {
               
               {/* Column 1: Small Stats Stack */}
               <div className="space-y-6">
-                <div className="bg-[#18181B] border border-[#27272A] rounded-2xl p-5 h-40 relative">
+                <div className="bg-card border border-[#27272A] rounded-2xl p-5 h-40 relative">
                    <div className="space-y-3">
                       <div className="h-3 w-24 bg-[#27272A] rounded" />
                       <div className="h-8 w-10 bg-[#27272A] rounded" />
                    </div>
                    <div className="absolute right-5 top-1/2 -translate-y-1/2 h-12 w-12 rounded-lg bg-[#27272A]" />
                 </div>
-                <div className="bg-[#18181B] border border-[#27272A] rounded-2xl p-5 h-40 relative">
+                <div className="bg-card border border-[#27272A] rounded-2xl p-5 h-40 relative">
                     <div className="space-y-3">
                       <div className="h-3 w-24 bg-[#27272A] rounded" />
                       <div className="h-8 w-10 bg-[#27272A] rounded" />
@@ -80,14 +80,14 @@ const ProfileSkeleton = () => {
 
                {/* Column 2: Small Stats Stack */}
                <div className="space-y-6">
-                <div className="bg-[#18181B] border border-[#27272A] rounded-2xl p-5 h-40 relative">
+                <div className="bg-card border border-[#27272A] rounded-2xl p-5 h-40 relative">
                     <div className="space-y-3">
                       <div className="h-3 w-16 bg-[#27272A] rounded" />
                       <div className="h-8 w-14 bg-[#27272A] rounded" />
                    </div>
                    <div className="absolute right-5 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-[#27272A]" />
                 </div>
-                <div className="bg-[#18181B] border border-[#27272A] rounded-2xl p-5 h-40">
+                <div className="bg-card border border-[#27272A] rounded-2xl p-5 h-40">
                    <div className="space-y-3">
                       <div className="h-3 w-20 bg-[#27272A] rounded" />
                       <div className="h-8 w-12 bg-[#27272A] rounded" />
@@ -96,7 +96,7 @@ const ProfileSkeleton = () => {
               </div>
 
               {/* Column 3: Solved Difficulty (Tall Card) */}
-              <div className="bg-[#18181B] border border-[#27272A] rounded-2xl p-6 flex flex-col items-center justify-center h-auto min-h-[340px] xl:col-span-1 md:col-span-2 xl:row-span-1">
+              <div className="bg-card border border-[#27272A] rounded-2xl p-6 flex flex-col items-center justify-center h-auto min-h-[340px] xl:col-span-1 md:col-span-2 xl:row-span-1">
                 <div className="w-full h-4 bg-[#27272A] rounded mb-8 self-start " />
                 {/* Donut Chart Skeleton */}
                 <div className="relative h-40 w-40 rounded-full border-8 border-[#27272A] flex items-center justify-center">
@@ -111,7 +111,7 @@ const ProfileSkeleton = () => {
           <div className="lg:col-span-1 space-y-6">
             
             {/* Languages Card */}
-            <div className="bg-[#18181B] border border-[#27272A] rounded-2xl p-6 h-64">
+            <div className="bg-card border border-[#27272A] rounded-2xl p-6 h-64">
               <div className="h-5 w-24 bg-[#27272A] rounded mb-6" />
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
@@ -126,7 +126,7 @@ const ProfileSkeleton = () => {
             </div>
 
             {/* Skills Card */}
-            <div className="bg-[#18181B] border border-[#27272A] rounded-2xl p-6 h-64">
+            <div className="bg-card border border-[#27272A] rounded-2xl p-6 h-64">
                <div className="h-5 w-24 bg-[#27272A] rounded mb-6" />
                <div className="space-y-2">
                  <div className="h-3 w-20 bg-[#27272A] rounded mb-2" />

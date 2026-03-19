@@ -2,6 +2,8 @@ import { ProblemI } from "@/models/problem.model";
 import { SubmissionI } from "@/models/submission.model";
 import { TestCaseI } from "@/models/testcase.model";
 import { AICodeAnalyzerResposeI, SubmissionForProblemI, SubmissionResponseT } from "./types";
+import { ProblemListI } from "@/models/problemList.model";
+import { ListProblemI } from "@/models/listProblem.model";
 
 // utils/apiClient.ts
 type FetchOpts = {
@@ -115,12 +117,16 @@ class ApiClient {
   // Problem Lists Endpoints
   // ------------------------
 
-  async getLists() {
-    return this.request<{ lists: import("@/models/problemList.model").ProblemListI[] }>("/lists");
+  async getLists(userId?: string, problemId?: string) {
+    let url = `/lists/user/${userId}`;
+    if (problemId) {
+      url += `?problemId=${problemId}`;
+    }
+    return this.request<{ lists: ProblemListI[] }>(url);
   }
 
   async createList(data: { title: string; description?: string; isPublic?: boolean }) {
-    return this.request<{ message: string; list: import("@/models/problemList.model").ProblemListI }>("/lists", {
+    return this.request<{ message: string; list: ProblemListI }>("/lists", {
       method: "POST",
       body: data,
     });
@@ -128,13 +134,13 @@ class ApiClient {
 
   async getListById(listId: string, page = 1, limit = 10) {
     return this.request<{
-      list: import("@/models/problemList.model").ProblemListI;
+      list: ProblemListI;
       problems: import("./types").PaginatedListProblems;
     }>(`/lists/${listId}?page=${page}&limit=${limit}`);
   }
 
-  async updateList(listId: string, data: Partial<import("@/models/problemList.model").ProblemListI>) {
-    return this.request<{ message: string; list: import("@/models/problemList.model").ProblemListI }>(`/lists/${listId}`, {
+  async updateList(listId: string, data: Partial<ProblemListI>) {
+    return this.request<{ message: string; list: ProblemListI }>(`/lists/${listId}`, {
       method: "PATCH",
       body: data,
     });
@@ -154,7 +160,7 @@ class ApiClient {
   }
 
   async addProblemToList(listId: string, problemId: string) {
-    return this.request<{ message: string; entry: import("@/models/listProblem.model").ListProblemI }>(`/lists/${listId}/problems`, {
+    return this.request<{ message: string; entry:ListProblemI }>(`/lists/${listId}/problems`, {
       method: "POST",
       body: { problemId },
     });

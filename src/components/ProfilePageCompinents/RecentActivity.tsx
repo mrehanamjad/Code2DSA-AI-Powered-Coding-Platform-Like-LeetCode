@@ -2,117 +2,16 @@
 
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
-import {  ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import RecentACTable from './RecentACTable'
 import Link from 'next/link'
+import UserListsSection from '../Lists/UserListsSection'
 
-// const activities = [
-//   {
-//     id: 1,
-//     problem: 'Two Sum',
-//     difficulty: 'Easy',
-//     status: 'Accepted',
-//     timestamp: '2 hours ago',
-//     statusIcon: CheckCircle,
-//     statusColor: 'text-green-500',
-//   },
-//   {
-//     id: 2,
-//     problem: 'Median of Two Sorted Arrays',
-//     difficulty: 'Hard',
-//     status: 'Accepted',
-//     timestamp: '5 hours ago',
-//     statusIcon: CheckCircle,
-//     statusColor: 'text-green-500',
-//   },
-//   {
-//     id: 3,
-//     problem: 'Longest Substring Without Repeating Characters',
-//     difficulty: 'Medium',
-//     status: 'Accepted',
-//     timestamp: '1 day ago',
-//     statusIcon: CheckCircle,
-//     statusColor: 'text-green-500',
-//   },
-//   {
-//     id: 4,
-//     problem: 'Container With Most Water',
-//     difficulty: 'Medium',
-//     status: 'Pending',
-//     timestamp: '2 days ago',
-//     statusIcon: Clock,
-//     statusColor: 'text-yellow-500',
-//   },
-//   {
-//     id: 5,
-//     problem: 'Regular Expression Matching',
-//     difficulty: 'Hard',
-//     status: 'Rejected',
-//     timestamp: '3 days ago',
-//     statusIcon: AlertCircle,
-//     statusColor: 'text-red-500',
-//   },
-// ]
 
-// const myList = [
-//   {
-//     id: 1,
-//     problem: 'Reverse Integer',
-//     difficulty: 'Easy',
-//     status: 'Todo',
-//     timestamp: 'Added 1 week ago',
-//     statusIcon: Clock,
-//     statusColor: 'text-blue-500',
-//   },
-//   {
-//     id: 2,
-//     problem: 'Binary Tree Level Order Traversal',
-//     difficulty: 'Medium',
-//     status: 'In Progress',
-//     timestamp: 'Added 3 days ago',
-//     statusIcon: Clock,
-//     statusColor: 'text-yellow-500',
-//   },
-// ]
-
-// const challenges = [
-//   {
-//     id: 1,
-//     problem: '30-Day Challenge: Arrays',
-//     difficulty: 'Medium',
-//     status: 'In Progress',
-//     timestamp: '15 of 30 completed',
-//     statusIcon: CheckCircle,
-//     statusColor: 'text-blue-500',
-//   },
-//   {
-//     id: 2,
-//     problem: 'Weekly Challenge: Dynamic Programming',
-//     difficulty: 'Hard',
-//     status: 'Active',
-//     timestamp: '5 of 7 solved',
-//     statusIcon: Clock,
-//     statusColor: 'text-yellow-500',
-//   },
-// ]
-
-export default function RecentActivity({userId}:{userId:string}) {
-  // const [currentPage, setCurrentPage] = useState(0)
+export default function RecentActivity({ userId }: { userId: string }) {
   const [activeTab, setActiveTab] = useState<'recent' | 'list' | 'challenges'>('recent')
 
-  // const getTabData = () => {
-  //   switch (activeTab) {
-  //     case 'list':
-  //       return myList
-  //     case 'challenges':
-  //       return challenges
-  //     default:
-  //       return activities
-  //   }
-  // }
-
-  // const currentData = getTabData()
 
 
 
@@ -124,11 +23,10 @@ export default function RecentActivity({userId}:{userId:string}) {
   const TabButton = ({ tab, label }: { tab: 'recent' | 'list' | 'challenges'; label: string }) => (
     <button
       onClick={() => handleTabChange(tab)}
-      className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
-        activeTab === tab
-          ? 'bg-[oklch(0.76_0.22_86.3)] text-black'
-          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-      }`}
+      className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${activeTab === tab
+        ? 'bg-primary text-primary-foreground'
+        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+        }`}
     >
       {label}
     </button>
@@ -142,18 +40,24 @@ export default function RecentActivity({userId}:{userId:string}) {
 
       <div className='flex gap-2 mb-3 border-b border-border pb-2'>
         <TabButton tab='recent' label='Recent Activity' />
-        {/* <TabButton tab='list' label='My List' /> */}
+        <TabButton tab='list' label='My List' />
         {/* <TabButton tab='challenges' label='Challenges' /> */}
       </div>
 
-      <div className='overflow-x-auto'>
+      {activeTab === 'recent' && <div className='overflow-x-auto'>
         <div className='flex flex-row-reverse'>
           <Link href={'/progress'} ><Button variant={'ghost'} size={"sm"} className='text-sm cursor-pointer'>View All Submissions <ArrowRight /> </Button></Link>
         </div>
-       <RecentACTable userId={userId} />
-      </div>
+        <RecentACTable userId={userId} />
+      </div>}
 
-        {/* pagination: */}
+      {activeTab === 'list' && (<div className='overflow-x-auto'>
+        <UserListsSection listPage={false} userId={userId} />
+      </div>)}
+
+
+
+      {/* pagination: */}
       {/* <div className='flex items-center justify-between mt-6 pt-6 border-t border-border'>
         <p className='text-sm text-muted-foreground'>
           Showing {currentPage * itemsPerPage + 1} to {Math.min((currentPage + 1) * itemsPerPage, currentData.length)} of {currentData.length}

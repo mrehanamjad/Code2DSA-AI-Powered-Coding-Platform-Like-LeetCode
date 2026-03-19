@@ -1,88 +1,67 @@
-import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
-import Logo from "./Logo";
+"use client"
+import Link from "next/link"
+import { Github, Linkedin, ExternalLink } from "lucide-react"
+import Container from "@/components/Container"
+import { usePathname } from "next/navigation"
 
-const Footer = () => {
+export function Footer() {
+  const currentYear = new Date().getFullYear()
+  const pathname = usePathname()
+
+  if(pathname.startsWith("/problems/")) return null
+
   return (
-    <footer className="border-t bg-card mt-16">
-      <div className="container px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div className="space-y-3">
-            <Logo />
-            <p className="text-sm text-muted-foreground">
-              Master coding challenges and ace your technical interviews.
-            </p>
+    <footer className="bg-card border-t border-border px-[clamp(20px,4vw,64px)] pb-[clamp(24px,3vh,40px)] font-sans">
+      <Container>
+
+        <div className="pt-[clamp(20px,3vh,32px)] flex flex-col sm:flex-row items-center justify-between gap-4 text-[13px] font-light text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <span>© {currentYear}</span>
+            <span className="font-medium text-foreground">Code2DSA</span>
+            <span className="hidden sm:inline mx-1">•</span>
+            <span>All rights reserved.</span>
           </div>
 
-          {/* Links */}
-          <div>
-            <h3 className="font-semibold mb-3">Platform</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="flex gap-3">
               <li>
-                <Link href="/" className="text-muted-foreground hover:text-primary transition-smooth">
-                  Problems
+                <Link
+                  href="https://github.com/mrehanamjad"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2 text-sm font-light text-muted-foreground hover:text-emerald-600 dark:hover:text-[#7EE8A2] transition-colors duration-200"
+                >
+                  <Github size={16} /> 
+                  GitHub
+                  <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
               </li>
               <li>
-                <Link href="/contests" className="text-muted-foreground hover:text-primary transition-smooth">
-                  Contests
+                <Link
+                  href="https://www.linkedin.com/in/mrehanamjad"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2 text-sm font-light text-muted-foreground hover:text-emerald-600 dark:hover:text-[#7EE8A2] transition-colors duration-200"
+                >
+                  <Linkedin size={16} /> 
+                  LinkedIn
+                  <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
               </li>
-              <li>
-                <Link href="/discuss" className="text-muted-foreground hover:text-primary transition-smooth">
-                  Discuss
-                </Link>
-              </li>
             </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold mb-3">Company</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-smooth">
-                  About
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-smooth">
-                  API
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-smooth">
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold mb-3">Legal</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-smooth">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-smooth">
-                  Terms of Service
-                </a>
-              </li>
-            </ul>
+          
+          <div className="flex items-center gap-1">
+            Built with ❤️ by{" "}
+            <a
+              href="https://github.com/mrehanamjad"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-foreground hover:text-emerald-600 dark:hover:text-[#7EE8A2] transition-colors decoration-emerald-500/30 underline underline-offset-4"
+            >
+              M. Rehan Amjad
+            </a>
           </div>
         </div>
-
-        <Separator className="my-6" />
-
-        <div className="text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} CodeArena. All rights reserved.
-        </div>
-      </div>
+      </Container>
     </footer>
-  );
-};
-
-export default Footer;
+  )
+}

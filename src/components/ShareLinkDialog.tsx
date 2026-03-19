@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, ReactNode } from "react"
 import { Check, Copy, Share2, Lock, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,29 +13,35 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import CreateListModal from "./CreateListModal"
 
-interface SharePageButtonProps {
-  listName: string
-  isPublic: boolean
-  listId: string
-  listDescription: string
-  onUpdateSuccess: () => void
+export interface ShareLinkDialogProps {
+  title: string
+  description: string
+  itemName?: string
+  isPublic?: boolean
+  privateStateContent?: ReactNode 
+  triggerText?: string
+  triggerClassName?: string
+  shareUrl?: string // Optional override, otherwise uses window.location.href
 }
 
-export function SharePageButton({
-  listName,
-  isPublic,
-  listId,
-  listDescription,
-  onUpdateSuccess,
-}: SharePageButtonProps) {
+export function ShareLinkDialog({
+  title,
+  description,
+  itemName,
+  isPublic = true,
+  privateStateContent,
+  triggerText = "Share",
+  triggerClassName = "",
+  shareUrl,
+}: ShareLinkDialogProps) {
   const [url, setUrl] = useState("")
   const [copied, setCopied] = useState(false)
 
+  // Hydrate the URL safely on the client
   useEffect(() => {
-    setUrl(window.location.href)
-  }, [])
+    setUrl(shareUrl || window.location.href)
+  }, [shareUrl])
 
   const copyToClipboard = async () => {
     try {
@@ -50,17 +56,14 @@ export function SharePageButton({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="gap-2 font-['Outfit'] font-semibold border-emerald-500/20 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all active:scale-95"
-        >
+        <Button variant="outline" className={`gap-2 cursor-pointer font-['Outfit'] font-semibold border-emerald-500/20 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all active:scale-95 ${triggerClassName}`}>
           <Share2 size={16} className="text-emerald-600 dark:text-[#7EE8A2]" />
-          Share
+          {triggerText}
         </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-md rounded-[24px] border-border bg-card/95 backdrop-blur-xl shadow-2xl overflow-hidden">
-        {/* Decorative Top Bar to indicate status */}
+        {/* Decorative Top Bar */}
         <div className={`absolute top-0 left-0 w-full h-1.5 ${isPublic ? 'bg-emerald-500' : 'bg-amber-500'}`} />
 
         <DialogHeader className="space-y-3 pt-2">
@@ -73,16 +76,16 @@ export function SharePageButton({
               )}
             </div>
             <DialogTitle className="font-['Outfit'] text-2xl font-bold tracking-tight">
-              Share List
+              {title}
             </DialogTitle>
           </div>
           <DialogDescription className="text-sm font-light leading-relaxed">
-            {isPublic 
-              ? "Anyone with this link can view your curated problem set."
-              : "This list is currently private. You must make it public before others can view it."}
-            <p className="text-sm font-semibold text-foreground mt-2 truncate">
-              {listName}
-            </p>
+            {description}
+            {itemName && (
+              <p className="text-sm font-semibold text-foreground mt-2 truncate">
+                {itemName}
+              </p>
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -93,7 +96,7 @@ export function SharePageButton({
               <Label htmlFor="link" className="sr-only">Link</Label>
               <Input
                 id="link"
-                defaultValue={url}
+                value={url}
                 readOnly
                 className="h-11 rounded-xl bg-muted/50 border-border focus-visible:ring-emerald-500/30 font-mono text-[11px]"
               />
@@ -102,41 +105,20 @@ export function SharePageButton({
               size="icon"
               onClick={copyToClipboard}
               className={`h-11 w-11 shrink-0 rounded-xl transition-all duration-300 ${
-                copied ? "bg-emerald-600" : "bg-foreground hover:bg-foreground/90"
+                copied ? "bg-emerald-600 hover:bg-emerald-700" : "bg-foreground hover:bg-foreground/90"
               }`}
             >
               {copied ? (
-                <Check size={18} className="animate-in zoom-in" />
+                <Check size={18} className="text-white animate-in zoom-in" />
               ) : (
-                <Copy size={18} />
+                <Copy size={18} className={copied ? "text-white" : ""} />
               )}
             </Button>
           </div>
         ) : (
-          /* --- PRIVATE STATE: Privacy Warning & Update --- */
-          <div className="mt-4 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 space-y-4 animate-in fade-in zoom-in-95 duration-500">
-            <div className="flex flex-col items-center text-center gap-2">
-              <p className="text-xs font-medium text-amber-700 dark:text-amber-400 uppercase tracking-widest">
-                Action Required
-              </p>
-              <p className="text-xs text-muted-foreground leading-snug">
-                Updating your list status to <span className="text-foreground font-bold italic">Public</span> will enable link sharing instantly.
-              </p>
-            </div>
-            
-            {/* Embedded CreateListModal for Edit Mode */}
-            <div className="flex justify-center">
-              <CreateListModal
-                mode="edit"
-                listId={listId}
-                initialData={{
-                  title: listName,
-                  description: listDescription,
-                  isPublic: isPublic,
-                }}
-                onSuccess={onUpdateSuccess}
-              />
-            </div>
+          /* --- PRIVATE STATE: Render Custom Content (like the Edit Modal) --- */
+          <div className="mt-4 animate-in fade-in zoom-in-95 duration-500">
+            {privateStateContent}
           </div>
         )}
 

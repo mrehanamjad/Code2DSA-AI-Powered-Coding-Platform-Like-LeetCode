@@ -5,7 +5,6 @@ import { HeroSection }    from "@/components/HomePg/HeroSection"
 import { FeaturesSection } from "@/components/HomePg/FeaturesSection"
 import { HowItWorksSection } from "@/components/HomePg/HowItWorksSection"
 import { CTASection }     from "@/components/HomePg/Ctasection"
-import { FooterSection }  from "@/components/HomePg/Footersection"
 import Container from "@/components/Container"
 
 export default function HomePage() {
@@ -106,7 +105,6 @@ export default function HomePage() {
         <FeaturesSection />
         <HowItWorksSection />
         <CTASection />
-        <FooterSection />
       </div>
     </>
   )

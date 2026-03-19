@@ -73,7 +73,7 @@ export default function AdminDashboard() {
     };
 
     fetchDashboardData();
-  }, [toast]);
+  }, []);
 
   if (isLoading) {
     return (

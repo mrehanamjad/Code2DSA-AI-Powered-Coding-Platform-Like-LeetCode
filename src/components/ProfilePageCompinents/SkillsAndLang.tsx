@@ -1,178 +1,119 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
-import {  Dot } from "lucide-react";
+import React from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Code2, Zap } from "lucide-react";
+import { cn } from "@/lib/utils"; // Standard shadcn utility
 
 type Skill = {
   name: string;
   questionSolved: number;
 };
 
-type CategorizedSkills = {
-  foundational: Skill[];
-  intermediate: Skill[];
-  advanced: Skill[];
+const CATEGORY_CONFIG = {
+  advanced: {
+    label: "Advanced",
+    color: "text-rose-500 bg-rose-50 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800",
+    dot: "bg-rose-500",
+    topics: ["Dynamic Programming", "Divide and Conquer", "Graph", "Backtracking", "Trie", "Segment Tree"],
+  },
+  intermediate: {
+    label: "Intermediate",
+    color: "text-amber-500 bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800",
+    dot: "bg-amber-500",
+    topics: ["Hash Table", "Math", "Recursion", "Sliding Window", "Greedy", "Linked List", "Binary Search"],
+  },
+  foundational: {
+    label: "Foundational",
+    color: "text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800",
+    dot: "bg-emerald-500",
+    topics: ["Array", "String", "Two Pointers", "Sorting", "Searching", "Stack", "Queue", "Matrix"],
+  },
 };
 
-function categorizeSkillsByName(skills: Skill[]): CategorizedSkills {
-  const foundationalTopics = [
-    "Array",
-    "String",
-    "Two Pointers",
-    "Sorting",
-    "Searching",
-    "Stack",
-    "Queue",
-    "Matrix",
-  ];
-  const intermediateTopics = [
-    "Hash Table",
-    "Math",
-    "Recursion",
-    "Sliding Window",
-    "Greedy",
-    "Linked List",
-    "Binary Search",
-  ];
-  const advancedTopics = [
-    "Dynamic Programming",
-    "Divide and Conquer",
-    "Graph",
-    "Backtracking",
-    "Trie",
-    "Segment Tree",
-  ];
-
-  const categories: CategorizedSkills = {
-    foundational: [],
-    intermediate: [],
-    advanced: [],
-  };
-
-  for (const skill of skills) {
-    const name = skill.name;
-
-    if (advancedTopics.includes(name)) {
-      categories.advanced.push(skill);
-    } else if (intermediateTopics.includes(name)) {
-      categories.intermediate.push(skill);
-    } else if (foundationalTopics.includes(name)) {
-      categories.foundational.push(skill);
-    } else {
-      // If topic is unknown, you can put it in foundational by default
-      categories.foundational.push(skill);
-    }
-  }
-
-  return categories;
-}
-
-
-
-export function SkillsAndLang({languages,skills}: {
-  languages: {
-    name: string;
-    questionSolved: number;
-  }[];
-  skills: {
-    name: string;
-    questionSolved: number;
-  }[];
+export function SkillsAndLang({ languages, skills }: {
+  languages: Skill[];
+  skills: Skill[];
 }) {
-  const categoriedSkills = categorizeSkillsByName(skills);
+  // Group skills by category
+  const categorized = skills.reduce((acc, skill) => {
+    if (CATEGORY_CONFIG.advanced.topics.includes(skill.name)) acc.advanced.push(skill);
+    else if (CATEGORY_CONFIG.intermediate.topics.includes(skill.name)) acc.intermediate.push(skill);
+    else acc.foundational.push(skill);
+    return acc;
+  }, { advanced: [], intermediate: [], foundational: [] } as Record<string, Skill[]>);
+
+  const maxSolved = Math.max(...languages.map(l => l.questionSolved), 1);
+
   return (
-    <div className="space-y-4 md:sticky md:top-20">
-      <Card className="bg-card border-border p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          Languages
-        </h2>
-        <div className="space-y-3">
+    <div className="flex flex-col gap-6 md:sticky md:top-20">
+      {/* Languages Card */}
+      <Card className="overflow-hidden border-none shadow-sm bg-card/50 backdrop-blur">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+            <Code2 size={16} /> Languages
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
           {languages.map((lang) => (
-            <div
-              key={lang.name}
-              className="flex justify-between items-center p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-            >
-              <span className="px-3 py-1 text-sm font-medium rounded-lg bg-slate-200 text-slate-800 dark:bg-slate-800 dark:text-slate-200">
-                {lang.name}
-              </span>
-              <span className="text-sm text-muted-foreground">
-                {lang.questionSolved} problems
-              </span>
+            <div key={lang.name} className="group relative">
+              <div className="flex justify-between items-center mb-1 relative z-10 px-1">
+                <span className="text-sm font-semibold">{lang.name}</span>
+                <span className="text-xs font-medium text-muted-foreground">{lang.questionSolved} Solved</span>
+              </div>
+              {/* Subtle Progress Bar Background */}
+              <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-primary/40 group-hover:bg-primary/60 transition-all duration-500" 
+                  style={{ width: `${(lang.questionSolved / maxSolved) * 100}%` }}
+                />
+              </div>
             </div>
           ))}
-        </div>
+        </CardContent>
       </Card>
 
-      <Card className="bg-card border-border p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-4">Skills</h2>
+      {/* Skills Card */}
+      <Card className="border-none shadow-sm bg-card/50 backdrop-blur">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+            <Zap size={16} /> Technical Skills
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {(Object.keys(CATEGORY_CONFIG) as Array<keyof typeof CATEGORY_CONFIG>).map((key) => {
+            const config = CATEGORY_CONFIG[key];
+            const items = categorized[key];
 
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-sm font-medium flex items-center gap-1 mb-3">
-              <Dot className="text-red-500" size={24} />
-              Advanced
-            </h3>
-            <div className="space-y-2 pl-4">
-              {categoriedSkills.advanced.map((skill) => (
-                <div
-                  key={skill.name}
-                  className="flex justify-between items-center gap-3"
-                >
-                  <span className="px-3 py-1 text-xs font-medium rounded-lg bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-200">
-                    {skill.name}
-                  </span>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    ×{skill.questionSolved}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+            if (items.length === 0) return null;
 
-          <div>
-            <h3 className="text-sm font-medium flex items-center gap-1 mb-3">
-              <Dot className="text-yellow-500" size={24} />
-              Intermediate
-            </h3>
-            <div className="space-y-2 pl-4">
-              {categoriedSkills.intermediate.map((skill) => (
-                <div
-                  key={skill.name}
-                  className="flex justify-between items-center gap-3"
-                >
-                  <span className="px-3 py-1 text-xs font-medium rounded-lg bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-200">
-                    {skill.name}
-                  </span>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    ×{skill.questionSolved}
-                  </span>
+            return (
+              <div key={key} className="space-y-3">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-tight text-muted-foreground/80">
+                  <span className={cn("h-2 w-2 rounded-full", config.dot)} />
+                  {config.label}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-medium flex items-center gap-1 mb-3">
-              <Dot className="text-green-500" size={24} />
-              Foundational
-            </h3>
-            <div className="space-y-2 pl-4">
-              {categoriedSkills.foundational.map((skill) => (
-                <div
-                  key={skill.name}
-                  className="flex justify-between items-center gap-3"
-                >
-                  <span className="px-3 py-1 text-xs font-medium rounded-lg bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200">
-                    {skill.name}
-                  </span>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    ×{skill.questionSolved}
-                  </span>
+                
+                <div className="flex flex-wrap gap-2">
+                  {items.map((skill) => (
+                    <div
+                      key={skill.name}
+                      className={cn(
+                        "flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[11px] font-medium transition-all hover:scale-105",
+                        config.color
+                      )}
+                    >
+                      {skill.name}
+                      <span className="opacity-60 font-normal">
+                        {skill.questionSolved}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
+              </div>
+            );
+          })}
+        </CardContent>
       </Card>
     </div>
   );
