@@ -106,6 +106,27 @@ class ApiClient {
     return this.request(`/user/statistics/${userId}/activity?year=${selectedYear}`);
   }
 
+  async updateProfileDetails(data: { name?: string; phone?: string; bio?: string }) {
+    return this.request("/profile/details", {
+      method: "PATCH",
+      body: data,
+    });
+  }
+
+  async updateProfileAvatar(data: { url: string; id: string }) {
+    return this.request("/profile/avatar", {
+      method: "PATCH",
+      body: data,
+    });
+  }
+
+  async deleteProfileAvatar(id: string) {
+    return this.request("/profile/avatar", {
+      method: "DELETE",
+      body: { id },
+    });
+  }
+
   async getAICodeAnalysis(data: { problemStatement: string; code: string; language: string }) {
     return this.request<AICodeAnalyzerResposeI>("/ai/code-analyze", {
       method: "POST",

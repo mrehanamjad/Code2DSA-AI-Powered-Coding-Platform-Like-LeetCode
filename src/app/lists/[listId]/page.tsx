@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "@/lib/apiClient/apiClient";
 import Container from "@/components/Container";
-import { Loader2, Trash2, Lock, Globe, AlertTriangle, Home, LayoutList } from "lucide-react";
+import { Trash2, Lock, Globe, AlertTriangle, Home, LayoutList } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ProblemListI } from "@/models/problemList.model";

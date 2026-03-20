@@ -1,10 +1,10 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Edit, Phone, Code2 } from "lucide-react";
 import Link from "next/link";
 import { ShareLinkDialog } from "../ShareLinkDialog";
+import UserAvatar from "../UserAvatar";
 
 export const ProfileHeader = ({
   avatar,
@@ -49,12 +49,7 @@ export const ProfileHeader = ({
           {/* Avatar Section with Level Ring */}
           <div className="relative mx-auto shrink-0 md:mx-0">
             <div className="rounded-full p-1 ring-2 ring-primary/20 transition-all duration-500 hover:ring-primary/50">
-              <Avatar className="h-32 w-32 border-4 border-background shadow-xl">
-                <AvatarImage src={avatar?.url} alt={name} className="object-cover" />
-                <AvatarFallback className="bg-gradient-to-br from-primary to-blue-600 text-3xl font-bold text-white">
-                  {name[0]?.toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
+              <UserAvatar avatar={avatar?.url} name={name} />
             </div>
             <Badge className="absolute -bottom-2 left-1/2 -translate-x-1/2 border-4 border-background bg-primary px-4 py-1 text-xs font-bold shadow-lg">
               LVL {level || 1}

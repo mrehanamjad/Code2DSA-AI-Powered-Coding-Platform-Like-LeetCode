@@ -1,14 +1,44 @@
-# Code2DSA 🚀
 
+  <h1 align="center" >Code2DSA 🚀</h1>
 <p align="center">
-  <b>AI-Powered Coding Platform (LeetCode-like)</b><br/>
-  Practice DSA • Build Structured Learning Paths • Get AI Feedback
+  <b align="center">AI-Powered Coding Platform (LeetCode-like)</b>
 </p>
 
+[![alt text](./public/images/mainImage.png)](https://code2dsa.vercel.app)
+
 <p align="center">
-  <a href="https://code2dsa.vercel.app">🌐 Live Demo</a> •
-  <a href="https://github.com/mrehanamjad/code2dsa">⭐ Star Repo</a>
+  <a  href="https://code2dsa.vercel.app">
+    <h1 align="center">🔗 Live Site</h1>
+  </a> 
 </p>
+
+
+
+
+## 📸 App Screenshots
+
+<details>
+<summary><b>Click to view platform screenshots</b></summary>
+<br>
+
+### Problem Solving & Editor
+![Problem View](./public/images/problem.png)
+
+### AI Analysis & Feedback
+![AI Code Analysis](./public/images/aiAnalyze.png)
+
+### Discovery & Organization
+![All Problems](./public/images/allProblems.png)
+![Custom Lists](./public/images/customLists.png)
+
+### User Progress
+![User Stats](./public/images/stats.png)
+
+### User Profile and Progress
+![User Profile](./public/images/profile.gif)
+
+profile.gif
+</details>
 
 ---
 

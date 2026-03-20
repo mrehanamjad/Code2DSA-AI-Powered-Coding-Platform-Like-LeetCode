@@ -104,6 +104,7 @@ const Settings = () => {
             
             <AvatarSection
               avatar={user.avatar}
+              name={user.name}
               onAvatarChange={(newAvatar) => handleUserUpdate({ avatar: newAvatar })}
             />
             
